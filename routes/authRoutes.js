@@ -1,12 +1,11 @@
-// Auth router
+// Admin Auth router
 const app = require('express');
 const router = app.Router();
 
 // Auth controller
-const authController = require('../controllers/AuthController');
+const authController = require('../controllers/AdminAuthController');
 
-// Login
-router.get('/login', authController.login);
-
+// Admin Sign In
+router.get('/signIn', authController.signIn);
 
 module.exports = router;
