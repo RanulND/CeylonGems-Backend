@@ -13,6 +13,7 @@ mongoose.connect(
         useFindAndModify: false
     }
 ).then(() => console.log('Connected to mongodb')).catch(e => console.log('Error occured when connecting to mongodb', e));
+const { MongoClient } = require('mongodb');
 
 // Body parsing as JSON
 const bodyParser = require('body-parser');
