@@ -7,10 +7,10 @@ const port = process.env.PORT || 5000; // Port to run
 const mongoose = require('mongoose');
 mongoose.connect(
    'mongodb+srv://ceylongems:N34qaZ8YpRHBb28@ceylongems.1jphx.mongodb.net/ceylongemsDB', {
-        useNewUrlParser: true,
-        useCreateIndex: true,
-        useUnifiedTopology: true,
-        useFindAndModify: false
+        // useNewUrlParser: true,
+        // // useCreateIndex: true,
+        // useUnifiedTopology: true,
+        // useFindAndModify: false
     }
 ).then(() => console.log('Connected to mongodb')).catch(e => console.log('Error occured when connecting to mongodb', e));
 const { MongoClient } = require('mongodb');
