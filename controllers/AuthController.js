@@ -1,6 +1,8 @@
 const Admin = require("../models/admin")
 const { MongoClient } = require('mongodb');
 const uri = 'mongodb+srv://ceylongems:N34qaZ8YpRHBb28@ceylongems.1jphx.mongodb.net/ceylongemsDB';
+const client = new MongoClient(uri);
+const bcrypt = require("bcrypt")
 
 exports.adminSignIn = function (req, res, next) {
     var username = req.body.username
@@ -27,7 +29,7 @@ exports.adminSignIn = function (req, res, next) {
     //     }
     // })
 
-    const client = new MongoClient(uri);
+    
     async function run() {
         try {
             await client.connect();
@@ -44,8 +46,10 @@ exports.adminSignIn = function (req, res, next) {
             const admin = await admins.findOne(query);
 
             if(admin){
-                let result = password.localeCompare(admin.password)
-                if(result == 0){
+                // let result = password.localeCompare(admin.password)
+                const cmp = await bcrypt.compare(password, admin.password);
+                // if(result == 0)
+                if(cmp){
                     res.json({
                         message: 'Admin Login successful'
                     })

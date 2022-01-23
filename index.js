@@ -1,7 +1,7 @@
 const express = require('express');
 const router = require('./routes'); // Routing module
 const app = express();
-const port = process.env.PORT || 5000; // Port to run
+const port = process.env.PORT || 5001; // Port to run
 
 // Connect to database
 const mongoose = require('mongoose');

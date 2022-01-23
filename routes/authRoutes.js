@@ -3,7 +3,7 @@ const app = require('express');
 const router = app.Router();
 
 // Auth controller
-const authController = require('../controllers/AdminAuthController');
+const authController = require('../controllers/AuthController');
 
 // Admin Sign In
 router.post('/AdminSignIn', authController.adminSignIn);
