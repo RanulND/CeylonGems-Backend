@@ -1,4 +1,3 @@
-const { type } = require('express/lib/response')
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 
@@ -24,7 +23,7 @@ const adminSchema = new Schema({
     phone : {
         type : String
     }
-})
+});
 
-const Admin = mongoose.model('Admin', adminSchema)
-module.exports = Admin
+const Admin = mongoose.model('Admin', adminSchema, 'admin');
+module.exports = Admin;
