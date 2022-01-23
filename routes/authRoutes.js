@@ -6,6 +6,6 @@ const router = app.Router();
 const authController = require('../controllers/AuthController');
 
 // Admin Sign In
-router.post('/AdminSignIn', authController.adminSignIn);
+router.post('/admin/signin', authController.adminSignIn);
 
 module.exports = router;
