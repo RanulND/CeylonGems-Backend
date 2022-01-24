@@ -59,7 +59,7 @@ exports.userSignUp = async(req,res) =>{
             firstName,lastName,nic,phoneNumber,email,password
         });
 
-        successResponse(res, 'User Login successful', user);
+        successResponse(res, 'User Sign Up successful', user);
     }catch(error){
         errorResponse(res, null, null, err);
     }
