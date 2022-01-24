@@ -1,5 +1,6 @@
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
+const bcrypt = require("bcrypt")
 
 const userSchema = new Schema({
     firstName : { 
@@ -9,18 +10,29 @@ const userSchema = new Schema({
         type : String
     },
     nic : {
-        type : String
+        type : String,
+        unique:true
     },
     phoneNumber : {
         type : String
     },
     email : {
-        type : String
+        type : String,
+        unique:true
     },
     password : {
         type : String
     },
 });
 
+//middelware for user 
+userSchema.pre("save",async function(){
+    if(!this.isModified("password")){
+        next();
+    }
+      const salt = await bcrypt.genSalt(10);
+    this.password = await bcrypt.hash(this.password, salt)
+
+})
 const User = mongoose.model('User', userSchema,'user');
 module.exports = User;

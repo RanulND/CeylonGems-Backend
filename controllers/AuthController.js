@@ -25,7 +25,7 @@ exports.adminSignIn = function (req, res) {
     });
 }
 
-//buyer auth controller
+//user auth controller | signin
 
 exports.userSignIn = function (req, res) {
     var email = req.body.email;
@@ -49,6 +49,20 @@ exports.userSignIn = function (req, res) {
     });
 }
 
-exports.userSignUp = (req,res) =>{
-    res.send("User Sign Up Route");
+//user auth controller | signup
+
+exports.userSignUp = async(req,res) =>{
+    const {firstName, lastName, nic, phoneNumber,email,password } = req.body;
+
+    try{
+        const user = User.create({
+            firstName,lastName,nic,phoneNumber,email,password
+        });
+
+        successResponse(res, 'User Login successful', user);
+    }catch(error){
+        errorResponse(res, null, null, err);
+    }
+
 }
+
