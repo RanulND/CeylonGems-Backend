@@ -4,36 +4,40 @@ const bcrypt = require("bcrypt")
 
 const userSchema = new Schema({
     firstName : { 
-        type : String
+        type : String,
+        required:true
     },
     lastName : {
-        type : String
+        type : String,
+        required:true
     },
     nic : {
         type : String,
-        unique:true
+        unique:true,
+        required:true
     },
     phoneNumber : {
-        type : String
+        type : String,
+        required:true
     },
     email : {
         type : String,
-        unique:true
+        unique:true,
+        required:true
     },
     password : {
-        type : String
+        type : String,
+        required:true
     },
 });
 
 //middelware for user 
-userSchema.pre("save",async function(){
-    if(!this.isModified("password")){
-        next();
-    }
-      const salt = await bcrypt.genSalt(10);
-    this.password = await bcrypt.hash(this.password, salt);
-    next();
-
-})
+// userSchema.pre("save",async function(){
+//     if(!this.isModified("password")){
+//         next();
+//     }
+//       const salt = await bcrypt.genSalt(10);
+//     this.password = await bcrypt.hash(this.password, salt);
+// })
 const User = mongoose.model('User', userSchema,'user');
 module.exports = User;

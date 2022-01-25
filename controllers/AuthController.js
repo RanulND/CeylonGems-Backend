@@ -2,7 +2,9 @@ const Admin = require("../models/admin")
 const User = require("../models/user")
 const bcrypt = require("bcrypt")
 const { ackResponse, errorResponse, successResponse } = require("../shared/responses")
-
+// Load input validation
+const validateRegisterInput = require("../validation/signUp");
+// const validateLoginInput = require("../../validation/login");
 exports.adminSignIn = function (req, res) {
     var email = req.body.email;
     var password = req.body.password;
@@ -51,18 +53,54 @@ exports.userSignIn = function (req, res) {
 
 //user auth controller | signup
 
-exports.userSignUp = async(req,res) =>{
+// exports.userSignUp = async(req,res) =>{
+    // const {firstName, lastName, nic, phoneNumber,email,password } = req.body;
+
+//     try{
+//         const user = User.create({
+//             firstName,lastName,nic,phoneNumber,email,password
+//         });
+
+//         successResponse(res, 'User Sign Up successful', user);
+//     }catch(error){
+//         errorResponse(res, null, null, err);
+//     }
+
+// }
+
+//user auth controller | signup 2
+exports.userSignUp=function(req, res){
+// Form validation
+  const { errors, isValid } = validateRegisterInput(req.body);
+// Check validation
+    if (!isValid) {
+    return res.status(400).json(errors);
+    }
     const {firstName, lastName, nic, phoneNumber,email,password } = req.body;
 
-    try{
-        const user = User.create({
-            firstName,lastName,nic,phoneNumber,email,password
+  User.findOne({ email}||{nic}).then(user => {
+      if (user) {
+        return res.status(400).json({ email: "Email or NIC already exists" });
+      } else {
+        const newUser = new User({
+          firstName,
+          lastName,
+          nic,
+          phoneNumber,
+          email,
+          password
         });
-
-        successResponse(res, 'User Sign Up successful', user);
-    }catch(error){
-        errorResponse(res, null, null, err);
-    }
-
-}
-
+  // Hash password before saving in database
+        bcrypt.genSalt(10, (err, salt) => {
+          bcrypt.hash(newUser.password, salt, (err, hash) => {
+            if (err) throw err;
+            newUser.password = hash;
+            newUser
+              .save()
+              .then(user => res.json(user))
+              .catch(err => console.log(err));
+          });
+        });
+      }
+    });
+  };
