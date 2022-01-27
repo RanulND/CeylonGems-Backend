@@ -2,10 +2,10 @@ const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 
 const adminSchema = new Schema({
-    fName : { 
+    firstName : { 
         type : String
     },
-    lName : {
+    lastName : {
         type : String
     },
     email : {
