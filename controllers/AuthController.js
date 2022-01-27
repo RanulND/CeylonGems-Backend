@@ -6,8 +6,9 @@ const { ackResponse, errorResponse, successResponse } = require("../shared/respo
 const validateRegisterInput = require("../validation/signUp");
 // const validateLoginInput = require("../../validation/login");
 exports.adminSignIn = function (req, res) {
-    var email = req.body.email;
-    var password = req.body.password;
+    // var email = req.body.email;
+    // var password = req.body.password;
+    var {email,password} = req.body
 
     Admin.findOne({ email:email }).then(admin => {
         if(admin){
@@ -30,8 +31,9 @@ exports.adminSignIn = function (req, res) {
 //user auth controller | signin
 
 exports.userSignIn = function (req, res) {
-    var email = req.body.email;
-    var password = req.body.password;
+    // var email = req.body.email;
+    // var password = req.body.password;
+    var {email,password} = req.body
 
     User.findOne({ email:email }).then(user => {
         if(user){
