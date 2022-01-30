@@ -1,17 +1,17 @@
 const Admin = require("../models/admin")
+<<<<<<< HEAD
+=======
 const jwt = require ("jsonwebtoken");
 const User = require("../models/user")
+>>>>>>> origin/dev
 const bcrypt = require("bcrypt")
 const sendEmail = require ("../shared/sendEmail");
 const crypto = require("crypto");
 const { ackResponse, errorResponse, successResponse } = require("../shared/responses")
-// Load input validation
-const validateRegisterInput = require("../validation/signUp");
-// const validateLoginInput = require("../../validation/login");
+
 exports.adminSignIn = function (req, res) {
-    // var email = req.body.email;
-    // var password = req.body.password;
-    var {email,password} = req.body
+    var email = req.body.email;
+    var password = req.body.password;
 
     Admin.findOne({ email:email }).then(admin => {
         if(admin){
