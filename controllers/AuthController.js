@@ -10,8 +10,6 @@ const validateRegisterInput = require("../validation/signUp");
 // const validateLoginInput = require("../../validation/login");
 
 exports.adminSignIn = function (req, res) {
-    // var email = req.body.email;
-    // var password = req.body.password;
     var { email, password } = req.body
 
     Admin.findOne({ email: email }).then(admin => {
