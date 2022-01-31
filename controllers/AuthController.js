@@ -3,8 +3,11 @@ const User = require("../models/user")
 const bcrypt = require("bcrypt")
 const { ackResponse, errorResponse, successResponse } = require("../shared/responses")
 // Load input validation
+
 const validateRegisterInput = require("../validation/signUp");
+
 // const validateLoginInput = require("../../validation/login");
+
 exports.adminSignIn = function (req, res) {
     var email = req.body.email;
     var password = req.body.password;
@@ -69,6 +72,7 @@ exports.userSignIn = function (req, res) {
 // }
 
 //user auth controller | signup 2
+
 exports.userSignUp=function(req, res){
 // Form validation
   const { errors, isValid } = validateRegisterInput(req.body);
