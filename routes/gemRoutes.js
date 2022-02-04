@@ -6,6 +6,6 @@ const router = app.Router();
 const gemController = require('../controllers/GemController');
 
 // Gem add
-router.post('/gem/add-gem', gemController.gemAdd);
+router.post('/add', gemController.gemAdd);
 
 module.exports = router;

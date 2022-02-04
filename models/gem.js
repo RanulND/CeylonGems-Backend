@@ -12,7 +12,6 @@ const gemSchema = new Schema({
     },
     hardness : {
         type : String,
-        unique:true,
         required:true
     },
     weight : {
@@ -21,7 +20,6 @@ const gemSchema = new Schema({
     },
     colour : {
         type : String,
-        unique:true,
         required:true
     },
     origin : {
