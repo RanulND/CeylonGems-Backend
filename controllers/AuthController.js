@@ -1,9 +1,6 @@
 const Admin = require("../models/admin")
-<<<<<<< HEAD
-=======
 const jwt = require ("jsonwebtoken");
 const User = require("../models/user")
->>>>>>> origin/dev
 const bcrypt = require("bcrypt")
 const sendEmail = require ("../shared/sendEmail");
 const crypto = require("crypto");
@@ -114,6 +111,7 @@ exports.userSignUp=function(req, res){
 
   //  User Forgot Password Initialization
 exports.forgotPassword = async (req, res, next) => {
+  // send password link
     // Send Email to email provided but first check if user exists
     const { email } = req.body;
   
@@ -121,7 +119,7 @@ exports.forgotPassword = async (req, res, next) => {
       const user = await User.findOne({ email });
   
       if (!user) {
-        return next(new errorResponse("No email could not be sent", 404));
+        return next(new errorResponse("User with given email does not Exist", 404));
       }
   
       // Reset Token Gen and add to database hashed (private) version of token
@@ -163,8 +161,10 @@ exports.forgotPassword = async (req, res, next) => {
   };
   
   // User Reset User Password
+
   exports.resetPassword = async (req, res, next) => {
     // Compare token in URL params to hashed token
+    // verify password reset link
     const resetPasswordToken = crypto
       .createHash("sha256")
       .update(req.params.resetToken)
@@ -179,8 +179,17 @@ exports.forgotPassword = async (req, res, next) => {
       if (!user) {
         return next(new errorResponse("Invalid Reset Token", 400));
       }
-  
-      user.password = req.body.password;
+      
+      //  set new password
+    
+      // Hash password before saving in database
+      bcrypt.genSalt(10, (err, salt) => {
+        bcrypt.hash(req.body.password, salt, (err, hash) => {
+          if (err) throw err;
+          user.password = hash;
+        });
+      });
+
       user.resetPasswordToken = undefined;
       user.resetPasswordExpire = undefined;
   
