@@ -16,9 +16,10 @@ router.post('/signin', authController.userSignIn);
 router.post('/signup', authController.userSignUp);
 
 //User forget Password
-router.post('/forgotpassword',authController.forgotPassword);
+ router.post('/forgotpassword',authController.forgotPassword);
 
-//User reset Password
-router.put('/resetpassword/:resetToken',authController.resetPassword);
+// //User reset Password
+ router.put('/resetpassword/:resetToken',authController.resetPassword);
 
-module.exports = router;
+
+ module.exports = router;
