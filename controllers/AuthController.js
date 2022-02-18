@@ -1,10 +1,14 @@
 const Admin = require("../models/admin")
+<<<<<<< HEAD
+=======
+const jwt = require ("jsonwebtoken");
 const User = require("../models/user")
+>>>>>>> origin/dev
 const bcrypt = require("bcrypt")
+const sendEmail = require ("../shared/sendEmail");
+const crypto = require("crypto");
 const { ackResponse, errorResponse, successResponse } = require("../shared/responses")
-// Load input validation
-const validateRegisterInput = require("../validation/signUp");
-// const validateLoginInput = require("../../validation/login");
+
 exports.adminSignIn = function (req, res) {
     var email = req.body.email;
     var password = req.body.password;
@@ -30,8 +34,9 @@ exports.adminSignIn = function (req, res) {
 //user auth controller | signin
 
 exports.userSignIn = function (req, res) {
-    var email = req.body.email;
-    var password = req.body.password;
+    // var email = req.body.email;
+    // var password = req.body.password;
+    var {email,password} = req.body
 
     User.findOne({ email:email }).then(user => {
         if(user){
@@ -103,4 +108,95 @@ exports.userSignUp=function(req, res){
         });
       }
     });
+  };
+
+
+
+  //  User Forgot Password Initialization
+exports.forgotPassword = async (req, res, next) => {
+    // Send Email to email provided but first check if user exists
+    const { email } = req.body;
+  
+    try {
+      const user = await User.findOne({ email });
+  
+      if (!user) {
+        return next(new errorResponse("No email could not be sent", 404));
+      }
+  
+      // Reset Token Gen and add to database hashed (private) version of token
+      const resetToken = user.getResetPasswordToken();
+  
+      await user.save();
+  
+      // Create reset url to email to provided email
+      const resetUrl = `http://localhost:3000/passwordreset/${resetToken}`;
+  
+      // HTML Message
+      const message = `
+        <h1>You have requested a password reset</h1>
+        <p>Please make a put request to the following link:</p>
+        <a href=${resetUrl} clicktracking=off>${resetUrl}</a>
+      `;
+  
+      try {
+        await sendEmail({
+          to: user.email,
+          subject: "Password Reset Request",
+          text: message,
+        });
+  
+        res.status(200).json({ success: true, data: "Email Sent" });
+      } catch (err) {
+        console.log(err);
+  
+        user.resetPasswordToken = undefined;
+        user.resetPasswordExpire = undefined;
+  
+        await user.save();
+  
+        return next(new errorResponse("Email could not be sent", 500));
+      }
+    } catch (err) {
+      next(err);
+    }
+  };
+  
+  // User Reset User Password
+  exports.resetPassword = async (req, res, next) => {
+    // Compare token in URL params to hashed token
+    const resetPasswordToken = crypto
+      .createHash("sha256")
+      .update(req.params.resetToken)
+      .digest("hex");
+  
+    try {
+      const user = await User.findOne({
+        resetPasswordToken,
+        resetPasswordExpire: { $gt: Date.now() },
+      });
+  
+      if (!user) {
+        return next(new errorResponse("Invalid Reset Token", 400));
+      }
+  
+      user.password = req.body.password;
+      user.resetPasswordToken = undefined;
+      user.resetPasswordExpire = undefined;
+  
+      await user.save();
+  
+      res.status(201).json({
+        success: true,
+        data: "Password Updated Success",
+        token: user.getSignedJwtToken(),
+      });
+    } catch (err) {
+      next(err);
+    }
+  };
+  
+  const sendToken = (user, statusCode, res) => {
+    const token = user.getSignedJwtToken();
+    res.status(statusCode).json({ sucess: true, token });
   };
