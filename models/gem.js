@@ -1,33 +1,31 @@
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
-const userSchema = new Schema({
-    firstName : { 
+
+const gemSchema = new Schema({
+    status : { 
         type : String,
         required:true
     },
-    lastName : {
+    quantity : {
         type : String,
         required:true
     },
-    nic : {
-        type : String,
-        unique:true,
-        required:true
-    },
-    phoneNumber : {
+    hardness : {
         type : String,
         required:true
     },
-    email : {
+    weight : {
         type : String,
-        unique:true,
         required:true
     },
-    password : {
+    colour : {
+        type : String,
+        required:true
+    },
+    origin : {
         type : String,
         required:true
     },
 });
-
-const User = mongoose.model('User', userSchema,'user');
-module.exports = User;
+const Gem = mongoose.model('Gem', gemSchema,'gem');
+module.exports = Gem;

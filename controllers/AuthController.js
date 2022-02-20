@@ -1,10 +1,11 @@
 const Admin = require("../models/admin")
 const User = require("../models/user")
 const bcrypt = require("bcrypt")
-const { body, validationResult } = require('express-validator');
-
 const { ackResponse, errorResponse, successResponse } = require("../shared/responses")
+const passwordComplexity = require("joi-password-complexity");
+const Joi = require('joi');
 
+// const validateLoginInput = require("../../validation/login");
 exports.adminSignIn = function (req, res) {
     var email = req.body.email;
     var password = req.body.password;
@@ -26,10 +27,23 @@ exports.adminSignIn = function (req, res) {
         errorResponse(res, null, null, err);
     });
 }
+//signIn Validation part
+
+const signinValidate = (data) => {
+	const schema = Joi.object({
+		email: Joi.string().email().required().label("Email"),
+		password: Joi.string().required().label("Password"),
+	});
+	return schema.validate(data);
+};
 
 //user auth controller | signin
 
 exports.userSignIn = function (req, res) {
+    const { error } = signinValidate(req.body);
+    if (error)
+			return res.status(400).send({ message: error.details[0].message });
+
     var email = req.body.email;
     var password = req.body.password;
 
@@ -50,15 +64,34 @@ exports.userSignIn = function (req, res) {
         errorResponse(res, null, null, err);
     });
 }
+//signUp validation
+
+//user auth controller | signup 
+
+const validate = (data) => {
+	const schema = Joi.object({
+		firstName: Joi.string().required().label("First Name"),
+		lastName: Joi.string().required().label("Last Name"),
+        nic: Joi.string().required().label("NIC"),
+        phoneNumber: Joi.string().required().label("Phone Number"),
+		email: Joi.string().email().required().label("Email"),
+		password: passwordComplexity().required().label("Password"),
+	});
+	return schema.validate(data);
+};
 
 //user auth controller | signup 
 
 exports.userSignUp=function(req, res){
-     const errors= validationResult(req) 
-    const {firstName, lastName, nic, phoneNumber,email,password } = req.body;
- if(!errors.isEmpty()){
-    return res.status(400).json({ errors: errors.array() });
- }
+
+const { error } = validate(req.body);
+
+if (error){
+ return errorResponse(res, 404,error.details[0], null);
+}
+
+const {firstName, lastName, nic, phoneNumber,email,password } = req.body;
+ 
   User.findOne({ email}).then(user => {
       if (user) {
         return res.status(400).json({ email: "Email or NIC already exists" });
