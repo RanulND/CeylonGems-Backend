@@ -32,11 +32,11 @@ const userSchema = new Schema({
         resetPasswordToken: String,
         resetPasswordExpire: Date,
     },
-    roles : {
-        seller : true,
-        buyer : true,
-        admin : false
-    }
+    // roles : {
+    //     seller : true,
+    //     buyer : true,
+    //     admin : false
+    // }
     
     
 });
