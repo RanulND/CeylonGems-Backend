@@ -29,6 +29,11 @@ const userSchema = new Schema({
         type : String,
         required:true
     },
+    roles : {
+        seller : true,
+        buyer : true,
+        admin : false
+    }
 });
 
 //middelware for user 
