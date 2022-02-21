@@ -119,7 +119,7 @@ exports.forgotPassword = async (req, res, next) => {
       const user = await User.findOne({ email });
   
       if (!user) {
-        return next(new errorResponse("User with given email does not Exist", 404));
+       errorResponse(res, 404, "User with given email does not Exist", null);
       }
   
       // Reset Token Gen and add to database hashed (private) version of token
@@ -158,7 +158,7 @@ exports.forgotPassword = async (req, res, next) => {
     } catch (err) {
       next(err);
     }
-  };
+  ;
   
   // User Reset User Password
 
@@ -208,4 +208,4 @@ exports.forgotPassword = async (req, res, next) => {
   const sendToken = (user, statusCode, res) => {
     const token = user.getSignedJwtToken();
     res.status(statusCode).json({ sucess: true, token });
-  };
+  }};
