@@ -1,4 +1,4 @@
-// Admin Auth router
+// Auth router
 const app = require('express');
 const router = app.Router();
 
@@ -15,5 +15,10 @@ router.post('/signin', authController.userSignIn);
 //User Sign Up
 router.post('/signup', authController.userSignUp);
 
+//User forget Password
+router.post('/forgotpassword',authController.forgotPassword);
+
+//User reset Password
+router.put('/resetpassword/:resetToken',authController.resetPassword);
 
 module.exports = router;
