@@ -1,9 +1,6 @@
 const Admin = require("../models/admin")
-<<<<<<< HEAD
-=======
 const jwt = require ("jsonwebtoken");
 const User = require("../models/user")
->>>>>>> origin/dev
 const bcrypt = require("bcrypt")
 const sendEmail = require ("../shared/sendEmail");
 const crypto = require("crypto");
