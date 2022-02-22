@@ -3,6 +3,8 @@ const router = require('./routes'); // Routing module
 const app = express();
 const port = process.env.PORT || 5000; // Port to run
 
+require('dotenv').config();
+
 // Connect to database
 const mongoose = require('mongoose');
 mongoose.connect(

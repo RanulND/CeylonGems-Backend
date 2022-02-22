@@ -144,7 +144,7 @@ exports.forgotPassword = async (req, res, next) => {
           text: message,
         });
   
-        res.status(200).json({ success: true, data: "Email Sent" });
+        res.status(200).json({ success: true, data: "Email Sent. Please check your email" });
       } catch (err) {
         console.log(err);
   
@@ -158,13 +158,13 @@ exports.forgotPassword = async (req, res, next) => {
     } catch (err) {
       next(err);
     }
-  ;
+};
   
   // User Reset User Password
 
   exports.resetPassword = async (req, res, next) => {
-    // Compare token in URL params to hashed token
-    // verify password reset link
+    //Compare token in URL params to hashed token
+   // verify password reset link
     const resetPasswordToken = crypto
       .createHash("sha256")
       .update(req.params.resetToken)
@@ -197,15 +197,16 @@ exports.forgotPassword = async (req, res, next) => {
   
       res.status(201).json({
         success: true,
-        data: "Password Updated Success",
+        data: "Password Updated Successfully",
         token: user.getSignedJwtToken(),
       });
     } catch (err) {
       next(err);
     }
-  };
+  
   
   const sendToken = (user, statusCode, res) => {
     const token = user.getSignedJwtToken();
     res.status(statusCode).json({ sucess: true, token });
-  }};
+  }
+};
