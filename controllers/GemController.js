@@ -14,15 +14,24 @@ exports.gemAdd = function (req, res) {
   // if (!isValid) {
   //   return res.status(400).json(errors);
   // }
-  const { status, quantity, hardness, weight, colour, origin } = req.body;
+  const { status,title,category,photos,description,size,weight,hardness,colour,origin,quantity,gem_certificate,format,base_value,auc_duration,} = req.body;
 
   const newGem = new Gem({
     status,
-    quantity,
-    hardness,
+    title,
+    category,
+    photos,
+    description,
+    size,
     weight,
+    hardness,
     colour,
     origin,
+    quantity,
+    gem_certificate,
+    format,
+    base_value,
+    auc_duration,
   });
   newGem
     .save()

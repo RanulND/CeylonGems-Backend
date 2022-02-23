@@ -3,18 +3,34 @@ const Schema = mongoose.Schema
 
 const gemSchema = new Schema({
     status : { 
+        type : Boolean,
+        required:true
+    },
+    title : { 
         type : String,
         required:true
     },
-    quantity : {
+    category : { 
         type : String,
         required:true
     },
-    hardness : {
+    photos : {
+        type : Array,
+        required : true
+    },
+    description : { 
+        type : String,
+        required:true
+    },
+    size : {
         type : String,
         required:true
     },
     weight : {
+        type : String,
+        required:true
+    },
+    hardness : {
         type : String,
         required:true
     },
@@ -24,6 +40,24 @@ const gemSchema = new Schema({
     },
     origin : {
         type : String,
+    },
+    quantity : {
+        type : Number,
+        require : true
+    },
+    gem_certificate : {
+        type : String,
+    },
+    format : {
+        type : String,
+        required : true
+    },
+    base_value : {
+        type : Number,
+        required:true
+    },
+    auc_duration : {
+        type : Number,
         required:true
     },
 });
