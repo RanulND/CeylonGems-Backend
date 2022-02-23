@@ -34,3 +34,13 @@ exports.gemAdd = function (req, res) {
     //get this to another function when fend created
   });
 };
+
+exports.getAllGems = function (req,res){
+
+  Gem.find({status:"available"}).then((gems)=>{
+    res.json(gems)
+  }).catch((err)=>{
+    console.log(err)
+  })
+
+}
