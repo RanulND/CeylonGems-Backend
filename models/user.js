@@ -2,24 +2,25 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema
 const bcrypt = require("bcrypt");
 const crypto = require("crypto");
+const jwt = require ("jsonwebtoken");
 
 const userSchema = new Schema({
     firstName : { 
         type : String,
-        required:true
+        // required:true
     },
     lastName : {
         type : String,
-        required:true
+        // required:true
     },
     nic : {
         type : String,
         unique:true,
-        required:true
+        // required:true
     },
     phoneNumber : {
         type : String,
-        required:true
+        // required:true
     },
     email : {
         type : String,
@@ -43,6 +44,11 @@ const userSchema = new Schema({
 //       const salt = await bcrypt.genSalt(10);
 //     this.password = await bcrypt.hash(this.password, salt);
 // })
+userSchema.methods.getSignedJwtToken = function () {
+    return jwt.sign({ id: this._id }, process.env.JWT_SECRET, {
+      expiresIn: process.env.JWT_EXPIRE,
+    });
+  };
 
 userSchema.methods.getResetPasswordToken = function () {
     const resetToken = crypto.randomBytes(20).toString("hex");

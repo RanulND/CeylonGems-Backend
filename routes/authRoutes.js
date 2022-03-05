@@ -1,5 +1,6 @@
 // Auth router
 const app = require('express');
+// const { body, check } = require('express-validator');
 const router = app.Router();
 
 // Auth controller
