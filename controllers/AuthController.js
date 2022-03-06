@@ -1,6 +1,7 @@
 const Admin = require("../models/admin")
 const jwt = require("jsonwebtoken");
 const User = require("../models/user")
+const UserVerification = require("../models/userVerification")
 const bcrypt = require("bcrypt")
 const sendEmail = require("../shared/sendEmail");
 const crypto = require("crypto");
@@ -79,8 +80,8 @@ const signupvalidate = (data) => {
   const schema = Joi.object({
     firstName: Joi.string().label("First Name").allow('', null).empty(['', null]).default('firstName'),
     lastName: Joi.string().label("Last Name").allow('', null).empty(['', null]).default('lastName'),
-        nic: Joi.string().required().label("NIC"),
-        phoneNumber: Joi.string().label("Phone Number").allow('', null).empty(['', null]).default('phoneNO'),
+    nic: Joi.string().required().label("NIC"),
+    phoneNumber: Joi.string().label("Phone Number").allow('', null).empty(['', null]).default('phoneNO'),
     email: Joi.string().email().required().label("Email"),
     password: passwordComplexity().required().label("Password"),
   });
@@ -91,15 +92,15 @@ const signupvalidate = (data) => {
 
 exports.userSignUp = function (req, res) {
 
-  const { error,value } = signupvalidate(req.body);
+  const { error, value } = signupvalidate(req.body);
 
   if (error) {
     return errorResponse(res, 404, error.details[0], null);
   }
-  var firstName= value.firstName;
-  var lastName=value.lastName;
-  var nic=req.body.nic;
-  var phoneNumber=value.phoneNumber;
+  var firstName = value.firstName;
+  var lastName = value.lastName;
+  var nic = req.body.nic;
+  var phoneNumber = value.phoneNumber;
   var email = req.body.email;
   var password = req.body.password;
   // const { email, password } = req.body;
@@ -114,7 +115,8 @@ exports.userSignUp = function (req, res) {
         nic,
         phoneNumber,
         email,
-        password
+        password,
+        verified: false
       });
 
       // Hash password before saving in database
@@ -124,13 +126,109 @@ exports.userSignUp = function (req, res) {
           newUser.password = hash;
           newUser
             .save()
-            .then(user => res.json(user))
+            .then((user) => {
+              //Handle Email Account Verfication
+              sendVerificationEmail(user, res);
+
+              console.log(res);
+              res.json(user)
+            })
             .catch(err => console.log(err));
         });
       });
     }
   });
 };
+
+//send verification email
+exports.sendVerificationEmail = async ({ _id, email }, res) => {
+  try {
+  // const userVerification = await UserVerification.findOne({ _id });
+  // Verify Email Token Gen and add to database hashed (private) version of token
+  const verifyToken = UserVerification.getVerifyEmailToken();
+  const verifyEmailExpire = UserVerification.getVerifyEmailTokenExpire();
+ 
+    //set values in userVerification model
+    const newUserVerification = new UserVerification({
+      userId: _id,
+      // verifyEmailToken : verifyEmailToken,
+      createdAt: Date.now(),
+      verifyEmailExpire: verifyEmailExpire
+    });
+    await newUserVerification.save();
+
+    // Create verification url to email for provided email
+    const verifyEmailUrl = `http://localhost:3000/verifyemail/${verifyToken}`;
+
+
+    // HTML Message
+    const message = `
+        <h1>Please verify your email address.</h1>
+        <p>To verify this email address belongs to you, please use the verification link below to log in:</p>
+        <a href=${verifyEmailUrl} clicktracking=off>${verifyEmailUrl}</a>
+      `;
+
+    try {
+      await sendEmail({
+        to: email,
+        subject: "CeylonRuby - Email Verification",
+        text: message,
+      });
+
+      res.status(200).json({ success: true, data: "Verification Email Sent.Thank you for Sign Up. Please check your email to verify your account" });
+    } catch (err) {
+      console.log(err);
+
+      UserVerification.verifyEmailToken = undefined;
+      UserVerification.verifyEmailExpire = undefined;
+
+      await UserVerification.save();
+      // res.status(200).json({ success: false, data: "Verify Email could not be sent" });
+      errorResponse(res, 500, "Verification Email could not be sent", null);
+
+    }
+  } catch (err) {
+    console.log(err);
+  }
+}
+
+//Email Verification
+exports.emailVerification = async (req, res, next) => {
+  //Compare token in URL params to hashed token
+  // verify password reset link
+  const verifyEmailToken = crypto
+    .createHash("sha256")
+    .update(req.params.verifyToken)
+    .digest("hex");
+
+  try {
+    const userVerification = await UserVerification.findOne({
+      verifyEmailToken,
+      verifyEmailExpire: { $gt: Date.now() },
+    });
+
+    if (!userVerification) {
+      errorResponse(res, 400, "Invalid Email Verification Token");
+
+    }
+
+    userVerification.verifyEmailToken = undefined;
+    userVerification.verifyEmailExpire = undefined;
+    User.verified = true;
+
+    await userVerification.save();
+
+  } catch (err) {
+    next(err);
+  }
+}
+
+
+
+
+
+
+
 
 
 
@@ -167,7 +265,7 @@ exports.forgotPassword = async (req, res, next) => {
     try {
       await sendEmail({
         to: user.email,
-        subject: "Password Reset Request",
+        subject: "CeylonRuby - Password Reset Request",
         text: message,
       });
 
@@ -179,7 +277,7 @@ exports.forgotPassword = async (req, res, next) => {
       user.resetPasswordExpire = undefined;
 
       await user.save();
-      res.status(200).json({ success: true, data: "Email could not be sent" });
+      // res.status(200).json({ success: false, data: "Email could not be sent" });
       errorResponse(res, 500, "Email could not be sent", null);
 
     }
@@ -214,6 +312,20 @@ exports.resetPassword = async (req, res, next) => {
     // Hash password before saving in database
     user.password = req.body.password;
 
+    const resetPasswordvalidate = (data) => {
+      const schema = Joi.object({
+
+        password: passwordComplexity().required().label("Password"),
+      });
+      return schema.validate(data);
+    };
+
+    const { error,} = resetPasswordvalidate(user.password);
+
+    if (error) {
+      return errorResponse(res, 404, error.details[0], null);
+    }
+
     user.password = bcrypt.hashSync(user.password, 10);
 
     // bcrypt.genSalt(10, (err, salt) => {
@@ -225,13 +337,6 @@ exports.resetPassword = async (req, res, next) => {
 
     //   });
     // });
-
-
-
-
-
-
-
 
     user.resetPasswordToken = undefined;
     user.resetPasswordExpire = undefined;

@@ -22,4 +22,10 @@ router.post('/forgotpassword',authController.forgotPassword);
 //User reset Password
 router.put('/resetpassword/:resetToken',authController.resetPassword);
 
+//send verify email
+router.post('/verifyuseremail',authController.sendVerificationEmail);
+
+//User Email Verification
+router.get('/verifyuseremail/:verifyToken',authController.emailVerification);
+
 module.exports = router;
