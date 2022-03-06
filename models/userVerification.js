@@ -37,25 +37,25 @@ userVerificationSchema.methods.getSignedJwtToken = function () {
     });
   };
 
-  userVerificationSchema.methods.getVerifyEmailToken = function () {
-    const verifyToken = crypto.randomBytes(20).toString("hex");
+//    userVerificationSchema.methods.getVerifyEmailToken = function () {
+//     const verifyToken = crypto.randomBytes(20).toString("hex");
   
-    // Hash token (private key) and save to database
-    this.verifyEmailToken = crypto
-      .createHash("sha256")
-      .update(verifyToken)
-      .digest("hex");
+//     // Hash token (private key) and save to database
+//     this.verifyEmailToken = crypto
+//       .createHash("sha256")
+//       .update(verifyToken)
+//       .digest("hex");
   
     
   
-    return verifyToken;
-  };
-  userVerificationSchema.methods.getVerifyEmailTokenExpire = function (){
+//     return verifyToken;
+//   };
+//   userVerificationSchema.methods.getVerifyEmailTokenExpire = function (){
 
-    // Set token expire date //(this.)
-    verifyEmailExpire = Date.now() + 10 * (60 * 1000); // Ten Minutes
-    return verifyEmailExpire;
-  };
+//     // Set token expire date //(this.)
+//    this.verifyEmailExpire = Date.now() + 10 * (60 * 1000); // Ten Minutes
+//     return verifyEmailExpire;
+//   };
 
 const UserVerification = mongoose.model('UserVerification', userVerificationSchema,'UserVerification');
 module.exports = UserVerification;

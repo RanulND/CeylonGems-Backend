@@ -128,9 +128,8 @@ exports.userSignUp = function (req, res) {
             .save()
             .then((user) => {
               //Handle Email Account Verfication
-              sendVerificationEmail(user, res);
-
-              console.log(res);
+              const { error, value } = sendVerificationEmail(user, res);
+             
               res.json(user)
             })
             .catch(err => console.log(err));
@@ -141,21 +140,30 @@ exports.userSignUp = function (req, res) {
 };
 
 //send verification email
-exports.sendVerificationEmail = async ({ _id, email }, res) => {
+const sendVerificationEmail = async ({ _id, email }, res) => {
   try {
-  // const userVerification = await UserVerification.findOne({ _id });
-  // Verify Email Token Gen and add to database hashed (private) version of token
-  const verifyToken = UserVerification.getVerifyEmailToken();
-  const verifyEmailExpire = UserVerification.getVerifyEmailTokenExpire();
- 
+    const verifyToken =crypto.randomBytes(20).toString("hex");
+    const verifyEmailExpire =Date.now() + 10 * (60 * 1000);
+    
     //set values in userVerification model
     const newUserVerification = new UserVerification({
       userId: _id,
-      // verifyEmailToken : verifyEmailToken,
+       // Verify Email Token Gen and add to database hashed (private) version of token
+      verifyEmailToken : crypto
+      .createHash("sha256")
+      .update(verifyToken)
+      .digest("hex"),
       createdAt: Date.now(),
       verifyEmailExpire: verifyEmailExpire
     });
     await newUserVerification.save();
+
+  
+ 
+  // const verifyToken = userVerification.getVerifyEmailToken();
+ // const verifyEmailExpire = userVerification.getVerifyEmailTokenExpire();
+  // const userVerification = await UserVerification.findOne({ userId });
+
 
     // Create verification url to email for provided email
     const verifyEmailUrl = `http://localhost:3000/verifyemail/${verifyToken}`;
@@ -176,6 +184,8 @@ exports.sendVerificationEmail = async ({ _id, email }, res) => {
       });
 
       res.status(200).json({ success: true, data: "Verification Email Sent.Thank you for Sign Up. Please check your email to verify your account" });
+
+
     } catch (err) {
       console.log(err);
 
@@ -188,14 +198,14 @@ exports.sendVerificationEmail = async ({ _id, email }, res) => {
 
     }
   } catch (err) {
-    console.log(err);
+    return(err);
   }
 }
 
 //Email Verification
 exports.emailVerification = async (req, res, next) => {
   //Compare token in URL params to hashed token
-  // verify password reset link
+  // verify email verification link
   const verifyEmailToken = crypto
     .createHash("sha256")
     .update(req.params.verifyToken)
@@ -208,16 +218,24 @@ exports.emailVerification = async (req, res, next) => {
     });
 
     if (!userVerification) {
-      errorResponse(res, 400, "Invalid Email Verification Token");
+     errorResponse(res, 400, "Invalid Email Verification Token");
 
     }
 
     userVerification.verifyEmailToken = undefined;
     userVerification.verifyEmailExpire = undefined;
-    User.verified = true;
-
     await userVerification.save();
 
+
+    userId = userVerification.userId;
+    User.findOne({ _id: userId }).then(user => {
+      user.verified = true;
+      user.save();
+      successResponse(res, 'User Verified', user);
+    }) .catch(err => console.log(err));
+   
+    
+    
   } catch (err) {
     next(err);
   }

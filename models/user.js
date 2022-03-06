@@ -3,6 +3,7 @@ const Schema = mongoose.Schema
 const bcrypt = require("bcrypt");
 const crypto = require("crypto");
 const jwt = require ("jsonwebtoken");
+const { bool } = require('joi');
 // const { boolean } = require('joi');
 
 const userSchema = new Schema({
@@ -32,10 +33,10 @@ const userSchema = new Schema({
         type : String,
         required:true
     },
-  //   verified : {
-  //     type :boolean,
+    verified : {
+      type :Boolean,
      
-  // },
+  },
   
    
     resetPasswordToken: String,
