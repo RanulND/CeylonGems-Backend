@@ -53,23 +53,54 @@ exports.userSignIn = function (req, res) {
   var password = req.body.password;
 
   User.findOne({ email: email }).then(user => {
-    if (user) {
-      const cmp = bcrypt.compareSync(password, user.password);
-      if (cmp) {
-        successResponse(res, 'User Login successful', user);
 
-      }
-      else {
-        errorResponse(res, null, 'Invalid Password', null);
+    if (user) {
+      if (user.verified) {
+        // const { error} =isNotVerified(email,res);
+        const cmp = bcrypt.compareSync(password, user.password);
+        if (cmp) {
+         return successResponse(res, 'User Login successful', user);
+
+        }
+        else {
+         return errorResponse(res, null, 'Invalid Password', null);
+        }
+      } else {
+       return errorResponse(res, null, 'Your account has not been verified. Please check your email to verify your account', null);
       }
 
     } else {
-      errorResponse(res, 404, 'User not found', null);
+     return errorResponse(res, 404, 'User not found. Please Sign Up', null);
     }
   }).catch(err => {
-    errorResponse(res, null, null, err);
+   return errorResponse(res, null, null, err);
   });
 }
+
+
+// const isNotVerified = async(email,res) => {
+//   try{
+//     const user = await User.findOne ({email:email});
+//     if(user.verified){
+//       return next();
+//     }
+//     errorResponse(res,null, 'Your account has not been verified. Please check your email to verify your account', null);
+//   }catch(error){
+//     console.log(error);
+//     errorResponse(res, 404, 'Something went wrong. Please check your details again', null);
+//   }
+// }
+
+
+
+
+
+
+
+
+
+
+
 //signUp validation
 
 //user auth controller | signup 
@@ -95,7 +126,7 @@ exports.userSignUp = function (req, res) {
   const { error, value } = signupvalidate(req.body);
 
   if (error) {
-    return errorResponse(res, 404, error.details[0], null);
+    return errorResponse(res, 404, error.details[0].message, null);
   }
   var firstName = value.firstName;
   var lastName = value.lastName;
@@ -107,7 +138,7 @@ exports.userSignUp = function (req, res) {
 
   User.findOne({ email }).then(user => {
     if (user) {
-      return res.status(400).json({ email: "Email Already exists" });
+      return errorResponse(res, 400, "Email Already exists", null);
     } else {
       const newUser = new User({
         firstName,
@@ -129,7 +160,9 @@ exports.userSignUp = function (req, res) {
             .then((user) => {
               //Handle Email Account Verfication
               const { error, value } = sendVerificationEmail(user, res);
-             
+              // return successResponse(res,
+              //   "Verification Email Sent.Thank you for Sign Up. Please check your email to verify your account",
+              //   null);
               res.json(user)
             })
             .catch(err => console.log(err));
@@ -142,27 +175,27 @@ exports.userSignUp = function (req, res) {
 //send verification email
 const sendVerificationEmail = async ({ _id, email }, res) => {
   try {
-    const verifyToken =crypto.randomBytes(20).toString("hex");
-    const verifyEmailExpire =Date.now() + 10 * (60 * 1000);
-    
+    const verifyToken = crypto.randomBytes(20).toString("hex");
+    const verifyEmailExpire = Date.now() + 10 * (60 * 1000);
+
     //set values in userVerification model
     const newUserVerification = new UserVerification({
       userId: _id,
-       // Verify Email Token Gen and add to database hashed (private) version of token
-      verifyEmailToken : crypto
-      .createHash("sha256")
-      .update(verifyToken)
-      .digest("hex"),
+      // Verify Email Token Gen and add to database hashed (private) version of token
+      verifyEmailToken: crypto
+        .createHash("sha256")
+        .update(verifyToken)
+        .digest("hex"),
       createdAt: Date.now(),
       verifyEmailExpire: verifyEmailExpire
     });
     await newUserVerification.save();
 
-  
- 
-  // const verifyToken = userVerification.getVerifyEmailToken();
- // const verifyEmailExpire = userVerification.getVerifyEmailTokenExpire();
-  // const userVerification = await UserVerification.findOne({ userId });
+
+
+    // const verifyToken = userVerification.getVerifyEmailToken();
+    // const verifyEmailExpire = userVerification.getVerifyEmailTokenExpire();
+    // const userVerification = await UserVerification.findOne({ userId });
 
 
     // Create verification url to email for provided email
@@ -183,8 +216,10 @@ const sendVerificationEmail = async ({ _id, email }, res) => {
         text: message,
       });
 
-      res.status(200).json({ success: true, data: "Verification Email Sent.Thank you for Sign Up. Please check your email to verify your account" });
-
+     // res.status(200).json({ success: true, data: "Verification Email Sent.Thank you for Sign Up. Please check your email to verify your account" });
+      return successResponse(res,
+        "Verification Email Sent.Thank you for Sign Up. Please check your email to verify your account",
+        null);
 
     } catch (err) {
       console.log(err);
@@ -194,11 +229,11 @@ const sendVerificationEmail = async ({ _id, email }, res) => {
 
       await UserVerification.save();
       // res.status(200).json({ success: false, data: "Verify Email could not be sent" });
-      errorResponse(res, 500, "Verification Email could not be sent", null);
+     return errorResponse(res, 500, "Verification Email could not be sent", null);
 
     }
   } catch (err) {
-    return(err);
+    return (err);
   }
 }
 
@@ -218,7 +253,7 @@ exports.emailVerification = async (req, res, next) => {
     });
 
     if (!userVerification) {
-     errorResponse(res, 400, "Invalid Email Verification Token");
+      errorResponse(res, 400, "Invalid Email Verification Token");
 
     }
 
@@ -232,10 +267,10 @@ exports.emailVerification = async (req, res, next) => {
       user.verified = true;
       user.save();
       successResponse(res, 'User Verified', user);
-    }) .catch(err => console.log(err));
-   
-    
-    
+    }).catch(err => console.log(err));
+
+
+
   } catch (err) {
     next(err);
   }
@@ -260,7 +295,7 @@ exports.forgotPassword = async (req, res, next) => {
     const user = await User.findOne({ email });
 
     if (!user) {
-      errorResponse(res, 404, "User with given email does not Exist", null);
+    return errorResponse(res, 404, "User with given email does not Exist", null);
 
     }
 
@@ -287,7 +322,8 @@ exports.forgotPassword = async (req, res, next) => {
         text: message,
       });
 
-      res.status(200).json({ success: true, data: "Email Sent. Please check your email" });
+      // res.status(200).json({ success: true, data: "Email Sent. Please check your email" });
+      return successResponse(res, "Email Sent. Please check your email", null);
     } catch (err) {
       console.log(err);
 
@@ -296,7 +332,7 @@ exports.forgotPassword = async (req, res, next) => {
 
       await user.save();
       // res.status(200).json({ success: false, data: "Email could not be sent" });
-      errorResponse(res, 500, "Email could not be sent", null);
+     return errorResponse(res, 500, "Email could not be sent", null);
 
     }
   } catch (err) {
@@ -304,8 +340,18 @@ exports.forgotPassword = async (req, res, next) => {
   }
 };
 
-// User Reset User Password
 
+// Validate reset password before saving in database
+const resetPasswordvalidate = (data) => {
+  const schema = Joi.object({
+
+    password: passwordComplexity().required().label("Password"),
+  });
+  return schema.validate(data);
+};
+
+
+// User Reset User Password
 exports.resetPassword = async (req, res, next) => {
   //Compare token in URL params to hashed token
   // verify password reset link
@@ -321,29 +367,23 @@ exports.resetPassword = async (req, res, next) => {
     });
 
     if (!user) {
-      errorResponse(res, 400, "Invalid Reset Token");
+     return errorResponse(res, 400, "Invalid Reset Token");
 
     }
 
     //  set new password
 
-    // Hash password before saving in database
+
     user.password = req.body.password;
 
-    const resetPasswordvalidate = (data) => {
-      const schema = Joi.object({
 
-        password: passwordComplexity().required().label("Password"),
-      });
-      return schema.validate(data);
-    };
-
-    const { error,} = resetPasswordvalidate(user.password);
+    const { error } = resetPasswordvalidate(req.body);
 
     if (error) {
-      return errorResponse(res, 404, error.details[0], null);
+      return errorResponse(res, 404, error.details[0].message, null);
     }
 
+    // Hash password before saving in database
     user.password = bcrypt.hashSync(user.password, 10);
 
     // bcrypt.genSalt(10, (err, salt) => {
@@ -360,12 +400,12 @@ exports.resetPassword = async (req, res, next) => {
     user.resetPasswordExpire = undefined;
 
     await user.save();
-
-    res.status(201).json({
-      success: true,
-      data: "Password Updated Successfully",
-      token: user.getSignedJwtToken(),
-    });
+    return successResponse(res, "Password Updated Successfully", null);
+    // res.status(201).json({
+    //   success: true,
+    //   data: "Password Updated Successfully",
+    //   token: user.getSignedJwtToken(),
+    // });
   } catch (err) {
     next(err);
   }
