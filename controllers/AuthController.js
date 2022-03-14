@@ -1,61 +1,68 @@
-const Admin = require("../models/admin");
+const Admin = require("../models/admin")
 const jwt = require("jsonwebtoken");
-const User = require("../models/user");
-const bcrypt = require("bcrypt");
+const User = require("../models/user")
+const bcrypt = require("bcrypt")
 const sendEmail = require("../shared/sendEmail");
 const crypto = require("crypto");
-const {
-  ackResponse,
-  errorResponse,
-  successResponse,
-} = require("../shared/responses");
+const { ackResponse, errorResponse, successResponse } = require("../shared/responses")
+const accessTokenSecret = 'youraccesstokensecret'
+
+// Load input validation
+const validateRegisterInput = require("../validation/signUp");
+// const validateLoginInput = require("../../validation/login");
 
 exports.adminSignIn = function (req, res) {
-  var email = req.body.email;
-  var password = req.body.password;
+  var { email, password } = req.body
 
-  Admin.findOne({ email: email })
-    .then((admin) => {
+
+    Admin.findOne({ email: email }).then(admin => {
       if (admin) {
         const cmp = bcrypt.compareSync(password, admin.password);
         if (cmp) {
-          successResponse(res, "Admin Login successful", admin);
-        } else {
-          errorResponse(res, null, "Invalid Password", null);
+          const token = jwt.sign({ email: admin.email, nic: admin.nic }, accessTokenSecret, { expiresIn: "5min" })
+          // localStorage.setItem('token', token)
+          console.log(token)
+          const adminData = {
+            name: admin.firstName + ' ' + admin.lastName,
+            email: admin.email,
+            token: token,
+            nic: admin.nic
+          }
+          successResponse(res, 'Admin Login successful', adminData);
+
+        }
+        else {
+          errorResponse(res, null, 'Invalid Password', null);
         }
       } else {
-        errorResponse(res, 404, "Admin not found", null);
+        errorResponse(res, 404, 'Admin not found', null);
       }
-    })
-    .catch((err) => {
+    }).catch(err => {
       errorResponse(res, null, null, err);
     });
-};
+  
+}
 
 //user auth controller | signin
-
 exports.userSignIn = function (req, res) {
-  // var email = req.body.email;
-  // var password = req.body.password;
-  var { email, password } = req.body;
+  var { email, password } = req.body
 
-  User.findOne({ email: email })
-    .then((user) => {
-      if (user) {
-        const cmp = bcrypt.compareSync(password, user.password);
-        if (cmp) {
-          successResponse(res, "User Login successful", user);
-        } else {
-          errorResponse(res, null, "Invalid Password", null);
-        }
-      } else {
-        errorResponse(res, 404, "User not found", null);
+  User.findOne({ email: email }).then(user => {
+    if (user) {
+      const cmp = bcrypt.compareSync(password, user.password);
+      if (cmp) {
+        successResponse(res, 'User Login successful', user);
       }
-    })
-    .catch((err) => {
-      errorResponse(res, null, null, err);
-    });
-};
+      else {
+        errorResponse(res, null, 'Invalid Password', null);
+      }
+    } else {
+      errorResponse(res, 404, 'User not found', null);
+    }
+  }).catch(err => {
+    errorResponse(res, null, null, err);
+  });
+}
 
 //user auth controller | signup
 
@@ -84,7 +91,7 @@ exports.userSignUp = function (req, res) {
   }
   const { firstName, lastName, nic, phoneNumber, email, password } = req.body;
 
-  User.findOne({ email } || { nic }).then((user) => {
+  User.findOne({ email } || { nic }).then(user => {
     if (user) {
       return res.status(400).json({ email: "Email or NIC already exists" });
     } else {
@@ -94,7 +101,7 @@ exports.userSignUp = function (req, res) {
         nic,
         phoneNumber,
         email,
-        password,
+        password
       });
       // Hash password before saving in database
       bcrypt.genSalt(10, (err, salt) => {
@@ -103,8 +110,8 @@ exports.userSignUp = function (req, res) {
           newUser.password = hash;
           newUser
             .save()
-            .then((user) => res.json(user))
-            .catch((err) => console.log(err));
+            .then(user => res.json(user))
+            .catch(err => console.log(err));
         });
       });
     }
@@ -159,11 +166,8 @@ exports.forgotPassword = async (req, res, next) => {
   } catch (err) {
     next(err);
   }
-};
-
-// User Reset User Password
+}
 exports.resetPassword = async (req, res, next) => {
-  // Compare token in URL params to hashed token
   const resetPasswordToken = crypto
     .createHash("sha256")
     .update(req.params.resetToken)
@@ -261,3 +265,40 @@ exports.registerUser = async (req, res) => {
     // })
   }
 };
+  //   const resetPasswordToken = crypto
+  //     .createHash("sha256")
+  //     .update(req.params.resetToken)
+  //     .digest("hex");
+
+  //   try {
+  //     const user = await User.findOne({
+  //       resetPasswordToken,
+  //       resetPasswordExpire: { $gt: Date.now() },
+  //     });
+
+  //     if (!user) {
+  //       return next(new errorResponse("Invalid Reset Token", 400));
+  //     }
+
+  //     user.password = req.body.password;
+  //     user.resetPasswordToken = undefined;
+  //     user.resetPasswordExpire = undefined;
+
+  //     await user.save();
+
+  //     res.status(201).json({
+  //       success: true,
+  //       data: "Password Updated Success",
+  //       token: user.getSignedJwtToken(),
+  //     });
+  //   } catch (err) {
+  //     next(err);
+  //   }
+
+  //   const sendToken = (user, statusCode, res) => {
+  //   const token = user.getSignedJwtToken();
+  //   res.status(statusCode).json({ sucess: true, token });
+  // };
+
+// };
+  
