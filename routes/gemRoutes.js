@@ -1,11 +1,17 @@
-// Gem router
+// Product router
 const app = require('express');
 const router = app.Router();
 
-// Gem controller
-const gemController = require('../controllers/GemController');
+// Product controller
+const productController = require('../controllers/ProductController');
 
 // Gem add
-router.post('/add', gemController.gemAdd);
+router.post('/add', productController.gemAdd);
+//Get gem type
+router.post('/type', productController.gemType);
+// Edit gem details
+router.put('/edit',productController.updateGem);
+//Get product details
+router.post('/details/:detailId',productController.getProductDetails);
 
 module.exports = router;

@@ -14,9 +14,6 @@ const validateRegisterInput = require("../validation/signUp");
 exports.adminSignIn = function (req, res) {
   var { email, password } = req.body
 
-  exports.adminSignIn = function (req, res) {
-    var email = req.body.email;
-    var password = req.body.password;
 
     Admin.findOne({ email: email }).then(admin => {
       if (admin) {
@@ -43,7 +40,7 @@ exports.adminSignIn = function (req, res) {
     }).catch(err => {
       errorResponse(res, null, null, err);
     });
-  }
+  
 }
 
 //user auth controller | signin
@@ -88,7 +85,7 @@ exports.userSignIn = function (req, res) {
 exports.userSignUp = function (req, res) {
   // Form validation
   const { errors, isValid } = validateRegisterInput(req.body);
-  //   // Check validation
+  // Check validation
   if (!isValid) {
     return res.status(400).json(errors);
   }
@@ -120,9 +117,6 @@ exports.userSignUp = function (req, res) {
     }
   });
 };
-
-
-
 
 //  User Forgot Password Initialization
 exports.forgotPassword = async (req, res, next) => {
@@ -173,10 +167,104 @@ exports.forgotPassword = async (req, res, next) => {
     next(err);
   }
 }
-
-// User Reset User Password
 exports.resetPassword = async (req, res, next) => {
-  // Compare token in URL params to hashed token
+  const resetPasswordToken = crypto
+    .createHash("sha256")
+    .update(req.params.resetToken)
+    .digest("hex");
+
+  try {
+    const user = await User.findOne({
+      resetPasswordToken,
+      resetPasswordExpire: { $gt: Date.now() },
+    });
+
+    if (!user) {
+      return next(new errorResponse("Invalid Reset Token", 400));
+    }
+
+    user.password = req.body.password;
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpire = undefined;
+
+    await user.save();
+
+    res.status(201).json({
+      success: true,
+      data: "Password Updated Success",
+      token: user.getSignedJwtToken(),
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+const sendToken = (user, statusCode, res) => {
+  const token = user.getSignedJwtToken();
+  res.status(statusCode).json({ sucess: true, token });
+};
+
+//start here!!!!!!!!!!!!!!!!!!!!
+// Get register user details
+exports.registerUser = async (req, res) => {
+  if (!req.body) {
+    return res.status(400).send({
+      message: "Content must not be empty",
+    });
+  } else {
+    var nic = req.body.nic;
+
+    User.findOneAndUpdate(
+      { nic: nic },
+      {
+        firstName: req.body.firstName,
+        lastName: req.body.lastName,
+        nic: req.body.nic,
+        phoneNumber: req.body.phoneNumber,
+        address: req.body.address,
+        gender: req.body.gender,
+      }
+    )
+      .then((user) => {
+        if (user) {
+          res.send(user);
+        } else {
+          return res.status(404).send({
+            message: "User not found !",
+          });
+        }
+      })
+      .catch((err) => {
+        return res.status(500).send({
+          message: "Error in updating the User data"+err,
+        });
+      });
+    // User.findOneAndUpdate( req.body.nic, {
+    //   status : req.body.status,
+    //   firstName : req.body.firstName,
+    //   lastName : req.body.lastName,
+    //   nic : req.body.nic,
+    //   phoneNumber : req.body.phoneNumber,
+    //   address : req.body.address,
+    //   gender : req.body.gender
+    // })
+    // .then(user => {
+    //   if(!user){
+    //     return res.status(404).send({
+    //       message: "User is not found !"
+    //     })
+    //   }
+    //   else{
+    //     res.send(user);
+    //   }
+    // })
+    // .catch(err => {
+    //   return res.status(500).send({
+    //     message : "Error in updating the User data"
+    //   })
+    // })
+  }
+};
   //   const resetPasswordToken = crypto
   //     .createHash("sha256")
   //     .update(req.params.resetToken)
@@ -212,5 +300,5 @@ exports.resetPassword = async (req, res, next) => {
   //   res.status(statusCode).json({ sucess: true, token });
   // };
 
-};
-
+// };
+  
