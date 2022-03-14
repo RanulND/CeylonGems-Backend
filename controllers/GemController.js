@@ -54,8 +54,18 @@ exports.getAllGems = function (req,res){
 
 }
 
-exports.getThreeGems = function (req,res){
-  const query = {status:true};
+exports.getThreeAuctionGems = function (req,res){
+  const query = {status:true , format:'Auction-Style'};
+  const sort = { $natural: -1 };
+  const limit = 3;
+  Gem.find(query).sort(sort).limit(limit).then((gems)=>{
+    res.json(gems)
+  }).catch((err)=>{
+    console.log(err)
+  });
+}
+exports.getThreeDirectGems = function (req,res){
+  const query = {status:true , format:'test'};
   const sort = { $natural: -1 };
   const limit = 3;
   Gem.find(query).sort(sort).limit(limit).then((gems)=>{
