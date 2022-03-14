@@ -1,15 +1,11 @@
 const Admin = require("../models/admin")
-const jwt = require("jsonwebtoken");
 const User = require("../models/user")
 const bcrypt = require("bcrypt")
 const sendEmail = require("../shared/sendEmail");
 const crypto = require("crypto");
 const { ackResponse, errorResponse, successResponse } = require("../shared/responses")
+const jwt = require('jsonwebtoken')
 const accessTokenSecret = 'youraccesstokensecret'
-
-// Load input validation
-const validateRegisterInput = require("../validation/signUp");
-// const validateLoginInput = require("../../validation/login");
 
 exports.adminSignIn = function (req, res) {
   var { email, password } = req.body
@@ -42,7 +38,23 @@ exports.adminSignIn = function (req, res) {
     });
   
 }
+//signIn Validation part
 
+const signinValidate = (data) => {
+	const schema = Joi.object({
+		email: Joi.string().email().required().label("Email"),
+		password: Joi.string().required().label("Password"),
+	});
+	return schema.validate(data);
+};
+
+
+//Generate JWT
+const generateToken = (id) => {
+  return jwt.sign({ id }, 'CeylonRuby123', {
+    expiresIn: '30d',
+  })
+}
 //user auth controller | signin
 exports.userSignIn = function (req, res) {
   var { email, password } = req.body
@@ -63,16 +75,14 @@ exports.userSignIn = function (req, res) {
     errorResponse(res, null, null, err);
   });
 }
+//signUp validation
 
-//user auth controller | signup
+//user auth controller | signup 
 
 // exports.userSignUp = async(req,res) =>{
 // const {firstName, lastName, nic, phoneNumber,email,password } = req.body;
 
-//     try{
-//         const user = User.create({
-//             firstName,lastName,nic,phoneNumber,email,password
-//         });
+//user auth controller | signup 
 
 //         successResponse(res, 'User Sign Up successful', user);
 //     }catch(error){

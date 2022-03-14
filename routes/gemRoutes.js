@@ -14,4 +14,11 @@ router.put('/edit',productController.updateGem);
 //Get product details
 router.post('/details/:detailId',productController.getProductDetails);
 
+//get all gems
+router.get('/',gemController.getAllGems);
+router.get('/home-gems',gemController.getThreeAuctionGems);
+router.get('/home-gems',gemController.getThreeDirectGems);
+
+router.get('/:id', gemController.getProduct);
+
 module.exports = router;
