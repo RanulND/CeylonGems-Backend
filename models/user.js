@@ -4,7 +4,7 @@ const bcrypt = require("bcrypt");
 const crypto = require("crypto");
 
 const userSchema = new Schema({
-    firstName : { 
+    firstName : {
         type : String,
         required:true
     },
@@ -20,6 +20,12 @@ const userSchema = new Schema({
     phoneNumber : {
         type : String,
         required:true
+    },
+    address : {
+        type : String
+    },
+    gender : {
+        type : String
     },
     email : {
         type : String,

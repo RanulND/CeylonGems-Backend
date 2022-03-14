@@ -4,7 +4,6 @@ const Schema = mongoose.Schema
 const gemSchema = new Schema({
     status : { 
         type : Boolean,
-        required:true
     },
     title : { 
         type : String,
@@ -15,7 +14,7 @@ const gemSchema = new Schema({
         required:true
     },
     photos : {
-        type : Array,
+        type : String,
         required : true
     },
     description : { 
@@ -54,12 +53,13 @@ const gemSchema = new Schema({
     },
     base_value : {
         type : Number,
-        required:true
     },
     auc_duration : {
         type : Number,
-        required:true
     },
+    product : {
+        type : String,
+    }
 });
 const Gem = mongoose.model('Gem', gemSchema,'gem');
 module.exports = Gem;
