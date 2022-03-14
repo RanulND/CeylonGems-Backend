@@ -22,4 +22,7 @@ router.post('/forgotpassword',authController.forgotPassword);
 //User reset Password
 router.put('/resetpassword/:resetToken',authController.resetPassword);
 
+//Register User
+router.put('/signup/register',authController.registerUser);
+
 module.exports = router;
