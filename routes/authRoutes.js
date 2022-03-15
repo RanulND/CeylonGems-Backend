@@ -1,6 +1,5 @@
 // Auth router
 const app = require('express');
-// const { body, check } = require('express-validator');
 const router = app.Router();
 
 // Auth controller
@@ -31,5 +30,7 @@ router.post('/verifyuseremail/:verifyToken',authController.emailVerification);
 
 //authentication
 router.get('/',protect, authController.getPrivateRoute);
+//Register User
+router.put('/signup/register',authController.registerUser);
 
 module.exports = router;

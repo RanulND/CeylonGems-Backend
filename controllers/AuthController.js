@@ -42,8 +42,14 @@ const signinValidate = (data) => {
   return schema.validate(data);
 };
 
-//user auth controller | signin
 
+//Generate JWT
+const generateToken = (id) => {
+  return jwt.sign({ id }, 'CeylonRuby123', {
+    expiresIn: '30d',
+  })
+}
+//user auth controller | signin
 exports.userSignIn = function (req, res) {
   const { error } = signinValidate(req.body);
   if (error)
@@ -329,7 +335,6 @@ exports.forgotPassword = async (req, res, next) => {
 
     // Create reset url to email to provided email
     const resetUrl = `http://localhost:3000/passwordreset/${resetToken}`;
-
 
     // HTML Message
     const message = `
