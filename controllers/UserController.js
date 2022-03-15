@@ -11,11 +11,24 @@ exports.viewsellerprofile = async function(req,res){
         if(!profile){
             return res.status(400).json({msg: 'There is no profile for this user'});
         };
-        res.json(profile);
+        res.json(user);
     })
 
    
     
+}
+
+
+exports.getAllUsers = function (req,res) {
+    User.find({}).then(user =>{
+        if(user){
+          res.json(user)
+
+    }
+    
+    }
+    );
+   
 }
     
     

@@ -197,3 +197,5 @@ exports.forgotPassword = async (req, res, next) => {
     const token = user.getSignedJwtToken();
     res.status(statusCode).json({ sucess: true, token });
   };
+
+  
