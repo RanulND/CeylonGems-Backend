@@ -5,6 +5,7 @@ const router = app.Router();
 
 // Auth controller
 const authController = require('../controllers/AuthController');
+const { protect } = require("../middleware/auth");
 
 // Admin Sign In
 router.post('/admin/signin', authController.adminSignIn);
@@ -26,6 +27,9 @@ router.put('/resetpassword/:resetToken',authController.resetPassword);
 // router.post('/verifyuseremail',authController.sendVerificationEmail);
 
 //User Email Verification
-router.put('/verifyuseremail/:verifyToken',authController.emailVerification);
+router.post('/verifyuseremail/:verifyToken',authController.emailVerification);
+
+//authentication
+router.get('/',protect, authController.getPrivateRoute);
 
 module.exports = router;

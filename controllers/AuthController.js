@@ -59,8 +59,9 @@ exports.userSignIn = function (req, res) {
         // const { error} =isNotVerified(email,res);
         const cmp = bcrypt.compareSync(password, user.password);
         if (cmp) {
-         return successResponse(res, 'User Login successful', user);
+         sendToken(user, 200, res);
 
+         return successResponse(res, 'User Login successful', user);
         }
         else {
          return errorResponse(res, null, 'Invalid Password', null);
@@ -72,6 +73,8 @@ exports.userSignIn = function (req, res) {
     } else {
      return errorResponse(res, 404, 'User not found. Please Sign Up', null);
     }
+   
+    
   }).catch(err => {
    return errorResponse(res, null, null, err);
   });
@@ -139,7 +142,16 @@ exports.userSignUp = function (req, res) {
   User.findOne({ email }).then(user => {
     if (user) {
       return errorResponse(res, 400, "Email Already exists", null);
-    } else {
+        
+    }
+    User.findOne({ nic }).then(user => {
+      if (user) {
+        return errorResponse(res, 400, "NIC Already exists", null);
+          
+      }
+    
+    
+    else {
       const newUser = new User({
         firstName,
         lastName,
@@ -163,20 +175,27 @@ exports.userSignUp = function (req, res) {
               // return successResponse(res,
               //   "Verification Email Sent.Thank you for Sign Up. Please check your email to verify your account",
               //   null);
-              res.json(user)
+               sendToken(user, 200, res);
+              // res.json(user)
+             
             })
             .catch(err => console.log(err));
         });
       });
     }
-  });
+  }).catch(err => {
+    return errorResponse(res, 400, "Something went wrong.", null);
+   });
+  }).catch(err => {
+    return errorResponse(res, 400, "Something went wrong.", null);
+   });
 };
 
 //send verification email
 const sendVerificationEmail = async ({ _id, email }, res) => {
   try {
     const verifyToken = crypto.randomBytes(20).toString("hex");
-    const verifyEmailExpire = Date.now() + 10 * (60 * 1000);
+    const verifyEmailExpire = Date.now() + 24 * 60 * (60 * 1000);//24hrs
 
     //set values in userVerification model
     const newUserVerification = new UserVerification({
@@ -298,6 +317,10 @@ exports.forgotPassword = async (req, res, next) => {
     return errorResponse(res, 404, "User with given email does not Exist", null);
 
     }
+    if (!user.verified) {
+      return errorResponse(res, 404, 'Your account has not been verified. Please check your email to verify your account', null);
+  
+      }
 
     // Reset Token Gen and add to database hashed (private) version of token
     const resetToken = user.getResetPasswordToken();
@@ -355,6 +378,7 @@ const resetPasswordvalidate = (data) => {
 exports.resetPassword = async (req, res, next) => {
   //Compare token in URL params to hashed token
   // verify password reset link
+  console.log(req);
   const resetPasswordToken = crypto
     .createHash("sha256")
     .update(req.params.resetToken)
@@ -410,9 +434,26 @@ exports.resetPassword = async (req, res, next) => {
     next(err);
   }
 
+};
 
-  const sendToken = (user, statusCode, res) => {
-    const token = user.getSignedJwtToken();
-    res.status(statusCode).json({ sucess: true, token });
-  }
+
+const sendToken = (user, statusCode, res) => {
+  const token = user.getSignedJwtToken();
+  res.status(statusCode).json
+  ({ sucess: true,
+     token });
+
+   
+}
+
+
+exports.getPrivateRoute = (req, res, next) => {
+  // res
+  //   .status(200)
+  //   .json({
+  //     success: true,
+  //     data: "You got access to the private data in this route",
+  //   });
+
+    return successResponse(res, "You got access to the private data in this route", null);
 };

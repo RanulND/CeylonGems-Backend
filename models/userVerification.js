@@ -31,11 +31,11 @@ const userVerificationSchema = new Schema({
   
  
 });
-userVerificationSchema.methods.getSignedJwtToken = function () {
-    return jwt.sign({ id: this._id }, process.env.JWT_SECRET, {
-      expiresIn: process.env.JWT_EXPIRE,
-    });
-  };
+// userVerificationSchema.methods.getSignedJwtToken = function () {
+//     return jwt.sign({ id: this._id }, process.env.JWT_SECRET, {
+//       expiresIn: process.env.JWT_EXPIRE,
+//     });
+//   };
 
 //    userVerificationSchema.methods.getVerifyEmailToken = function () {
 //     const verifyToken = crypto.randomBytes(20).toString("hex");
