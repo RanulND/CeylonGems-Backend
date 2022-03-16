@@ -95,3 +95,13 @@ exports.getProduct = function (req,res){
    }
  });
 }
+
+exports.getSellerGems = function (req,res){
+  const query = {seller_id:req.params.seller_id };
+  const sort = { $natural: -1 };
+  Gem.find(query).sort(sort).then((gems)=>{
+    res.json(gems)
+  }).catch((err)=>{
+    console.log(err)
+  });
+}

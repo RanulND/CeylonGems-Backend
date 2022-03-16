@@ -5,6 +5,9 @@ const gemSchema = new Schema({
     status : { 
         type : Boolean,
     },
+    seller_id:{
+        type : String,
+    },
     title : { 
         type : String,
         required:true
