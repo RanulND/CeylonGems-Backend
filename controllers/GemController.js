@@ -1,4 +1,5 @@
 const Gem = require("../models/gem");
+const Jewellery = require("../models/jewellery")
 const GemType = require("../models/gemType");
 
 const {
@@ -69,6 +70,16 @@ exports.getThreeDirectGems = function (req,res){
   const sort = { $natural: -1 };
   const limit = 3;
   Gem.find(query).sort(sort).limit(limit).then((gems)=>{
+    res.json(gems)
+  }).catch((err)=>{
+    console.log(err)
+  });
+}
+exports.getThreeJewellery = function (req,res){
+  const query = {status:true};
+  const sort = { $natural: -1 };
+  const limit = 3;
+  Jewellery.find(query).sort(sort).limit(limit).then((gems)=>{
     res.json(gems)
   }).catch((err)=>{
     console.log(err)

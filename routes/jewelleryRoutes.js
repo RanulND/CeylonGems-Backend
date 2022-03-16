@@ -10,4 +10,5 @@ router.post('/add', productController.jewelleryAdd);
 // Edit gem details
 router.put('/edit',productController.updateJewellery);
 
+
 module.exports = router;

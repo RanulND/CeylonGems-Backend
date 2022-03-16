@@ -4,6 +4,7 @@ const router = app.Router();
 
 // Product controller
 const productController = require('../controllers/ProductController');
+const gemController = require('../controllers/GemController');
 
 // Gem add
 router.post('/add', productController.gemAdd);
@@ -16,8 +17,9 @@ router.post('/details/:detailId',productController.getProductDetails);
 
 //get all gems
 router.get('/',gemController.getAllGems);
-router.get('/home-gems',gemController.getThreeAuctionGems);
-router.get('/home-gems',gemController.getThreeDirectGems);
+router.get('/home-gems1',gemController.getThreeAuctionGems);
+router.get('/home-gems2',gemController.getThreeDirectGems);
+router.get('/home-gems3',gemController.getThreeJewellery);
 
 router.get('/:id', gemController.getProduct);
 
