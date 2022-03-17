@@ -14,19 +14,22 @@ const { devNull } = require("os");
 exports.adminSignIn = function (req, res) {
   var email = req.body.email;
   var password = req.body.password;
-
+  var status = false
   Admin.findOne({ email: email }).then(admin => {
     if (admin) {
       const cmp = bcrypt.compareSync(password, admin.password);
       if (cmp) {
-        successResponse(res, 'Admin Login successful', admin);
+        status = true
+        successResponse(res, 'Admin Login successful', status);
       }
       else {
-        errorResponse(res, null, 'Invalid Password', null);
+        status = false
+        errorResponse(res, 200, 'Invalid Password', status);
       }
 
     } else {
-      errorResponse(res, 404, 'Admin not found', null);
+      status = false
+      errorResponse(res, 200, 'Admin not found', status);
     }
   }).catch(err => {
     errorResponse(res, null, null, err);
