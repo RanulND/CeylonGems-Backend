@@ -2,14 +2,16 @@ const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 
 const adminSchema = new Schema({
-    fName : { 
+    firstName : { 
         type : String
     },
-    lName : {
+    lastName : {
         type : String
     },
     email : {
-        type : String
+        type : String,
+        required: true,
+        unique: true
     },
     password : {
         type : String
@@ -18,7 +20,9 @@ const adminSchema = new Schema({
         type : Number
     },
     nic : {
-        type : String
+        type : String,
+        required: true,
+        unique: true
     },
     phone : {
         type : String
