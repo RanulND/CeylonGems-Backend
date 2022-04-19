@@ -3,8 +3,23 @@ const Schema = mongoose.Schema
 const bcrypt = require("bcrypt");
 const crypto = require("crypto");
 const jwt = require ("jsonwebtoken");
-const { bool } = require('joi');
+
 // const { boolean } = require('joi');
+
+const rolesSchema = new Schema({
+    buyer: {
+        type: Boolean,
+        default: false
+    },
+    sellar: {
+        type: Boolean,
+        default: false
+    },
+    admin: {
+        type: Boolean,
+        default: false
+    }
+});
 
 const userSchema = new Schema({
     firstName : { 
@@ -37,30 +52,8 @@ const userSchema = new Schema({
     verified : {
       type :Boolean,
      
-  },
-  
-   
-    resetPasswordToken: String,
-  resetPasswordExpire: Date,
- 
-    // roles : [
-    //     {
-    //         seller : {
-    //             type : Boolean
-    //         }
-    //     },
-    //     {
-    //         buyer : {
-    //             type : Boolean
-    //         }  
-    //     },
-    //     {
-    //         admin : {
-    //             type : Boolean
-    //         }
-    //     }
-    // ]
-    
+    },
+    roles: rolesSchema
     
 });
 

@@ -52,12 +52,13 @@ exports.counts = function (req, res) {
         User.count().then(userCount => {
             Auction.count().then(auctionCount => {
                 Order.count().then(orderCount => {
+
                     const data = {
                         users: userCount,
                         auctions: auctionCount,
                         orders: orderCount
-
                     }
+                    
                     successResponse(res, "Counts receifved successfully", data)
                 }).catch(err => {
                     errorResponse(res, null, null, err)
