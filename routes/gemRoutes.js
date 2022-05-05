@@ -20,7 +20,8 @@ router.get('/',gemController.getAllGems);
 router.get('/home-gems1',gemController.getThreeAuctionGems);
 router.get('/home-gems2',gemController.getThreeDirectGems);
 router.get('/home-gems3',gemController.getThreeJewellery);
-router.get('/seller-products/:seller_id',gemController.getSellerGems);
-router.get('/:id', gemController.getProduct);
+router.get('/seller-products/:seller_id',gemController.getSellerGems)
+router.get('/:id', gemController.getGemProduct);
+
 
 module.exports = router;

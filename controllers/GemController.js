@@ -56,7 +56,7 @@ exports.getAllGems = function (req,res){
 }
 
 exports.getThreeAuctionGems = function (req,res){
-  const query = {status:true , format:'Auction-Style'};
+  const query = {status:true , format:'Auction'};
   const sort = { $natural: -1 };
   const limit = 3;
   Gem.find(query).sort(sort).limit(limit).then((gems)=>{
@@ -66,7 +66,7 @@ exports.getThreeAuctionGems = function (req,res){
   });
 }
 exports.getThreeDirectGems = function (req,res){
-  const query = {status:true , format:'test'};
+  const query = {status:true , format:'Direct'};
   const sort = { $natural: -1 };
   const limit = 3;
   Gem.find(query).sort(sort).limit(limit).then((gems)=>{
@@ -86,7 +86,7 @@ exports.getThreeJewellery = function (req,res){
   });
 }
 
-exports.getProduct = function (req,res){
+exports.getGemProduct = function (req,res){
  Gem.findById(req.params.id).then(product =>{
    if(product){
      res.json(product)
@@ -95,6 +95,15 @@ exports.getProduct = function (req,res){
    }
  });
 }
+exports.getJewelryProduct = function (req,res){
+  Jewellery.findById(req.params.id).then(product =>{
+    if(product){
+      res.json(product)
+    } else {
+     return errorResponse(res, 404,res.err, null)
+    }
+  });
+ }
 
 exports.getSellerGems = function (req,res){
   const query = {seller_id:req.params.seller_id };

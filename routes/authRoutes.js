@@ -20,7 +20,7 @@ router.post('/signup', authController.userSignUp);
 router.post('/forgotpassword',authController.forgotPassword);
 
 //User reset Password
-router.put('/resetpassword/:resetToken',authController.resetPassword);
+// router.put('/resetpassword/:resetToken',authController.resetPassword);
 
 //send verify email
 // router.post('/verifyuseremail',authController.sendVerificationEmail);
@@ -31,6 +31,6 @@ router.post('/verifyuseremail/:verifyToken',authController.emailVerification);
 //authentication
 router.get('/',protect, authController.getPrivateRoute);
 //Register User
-router.put('/signup/register',authController.registerUser);
+// router.put('/signup/register',authController.registerUser);
 
 module.exports = router;
