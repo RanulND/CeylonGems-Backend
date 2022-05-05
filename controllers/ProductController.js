@@ -33,7 +33,7 @@ exports.gemAdd = function (req, res) {
     format,
     base_value,
     auc_duration,
-    product
+    product,
   } = req.body;
 
   const newGem = new Gem({
@@ -52,7 +52,7 @@ exports.gemAdd = function (req, res) {
     format,
     base_value,
     auc_duration,
-    product
+    product,
   });
   newGem
     .save()
@@ -69,69 +69,95 @@ exports.gemType = function (req, res) {
 
 //Get product details
 exports.getProductDetails = function (req, res) {
-  Gem.findById(req.params.detailId).then((details) => {
-    if(details){
-      successResponse(res, details);
-    }else{
-      Jewellery.findById(req.params.detailId).then((details) => {
-        if(details){
-          successResponse(res, details);
-        }
-        else{
-          return res.status(404).send({
-            message: "Product not found !",
-          });
-        }
-      })
-    }
-    
-  })
-  .catch((err) => {
-    return res.status(500).send({
-      message: "Error in finding the Product data "+err,
+  Gem.findById(req.params.detailId)
+    .then((details) => {
+      if (details) {
+        successResponse(res, details);
+      } else {
+        Jewellery.findById(req.params.detailId).then((details) => {
+          if (details) {
+            successResponse(res, details);
+          } else {
+            return res.status(404).send({
+              message: "Product not found !",
+            });
+          }
+        });
+      }
+    })
+    .catch((err) => {
+      return res.status(500).send({
+        message: "Error in finding the Product data " + err,
+      });
     });
-  });
 };
 
-// Should be updated !!!!!!
+
 // Update Gem details
 exports.updateGem = async (req, res) => {
-    var nic = req.body.nic;
-
-    User.findOneAndUpdate(
-      { nic: nic },
-      {
-        status: req.body.status,
-        firstName: req.body.firstName,
-        lastName: req.body.lastName,
-        nic: req.body.nic,
-        phoneNumber: req.body.phoneNumber,
-        address: req.body.address,
-        gender: req.body.gender,
-      }
-    )
-      .then((user) => {
-        if (user) {
-          res.send(user);
-        } else {
-          return res.status(404).send({
-            message: "User not found !",
-          });
-        }
-      })
-      .catch((err) => {
-        return res.status(500).send({
-          message: "Error in updating the User data"+err,
+  Gem.findByIdAndUpdate(req.params.detailId, {
+    status: req.body.status,
+    title: req.body.title,
+    category: req.body.category,
+    photos: req.body.photos,
+    description: req.body.description,
+    size: req.body.size,
+    weight: req.body.weight,
+    hardness: req.body.hardness,
+    colour: req.body.colour,
+    origin: req.body.origin,
+    quantity: req.body.quantity,
+    gem_certificate: req.body.gem_certificate,
+    format: req.body.format,
+    base_value: req.body.base_value,
+    auc_duration: req.body.auc_duration,
+    price: req.body.price,
+    product: req.body.product,
+  })
+    .then((user) => {
+      if (user) {
+        res.send(user);
+      } else {
+        return res.status(404).send({
+          message: "product not found !",
         });
+      }
+    })
+    .catch((err) => {
+      return res.status(500).send({
+        message: "Error in updating the product data" + err,
       });
-  
+    });
 };
 
 
 // Update Jewellery details
 exports.updateJewellery = async (req, res) => {
-
-}
+  Gem.findByIdAndUpdate(req.params.detailId, {
+    status: req.body.status,
+    title: req.body.title,
+    photos: req.body.photos,
+    description: req.body.description,
+    purity: req.body.purity,
+    quantity: req.body.quantity,
+    price: req.body.price,
+    product: req.body.product,
+  })
+    .then((user) => {
+      if (user) {
+        res.send(user);
+      } else {
+        return res.status(404).send({
+          message: "product not found !",
+        });
+      }
+    })
+    .catch((err) => {
+      return res.status(500).send({
+        message: "Error in updating the product data" + err,
+      });
+    });
+};
 
 //add Jewellery
 exports.jewelleryAdd = function (req, res) {
@@ -149,7 +175,7 @@ exports.jewelleryAdd = function (req, res) {
     purity,
     quantity,
     price,
-    product
+    product,
   } = req.body;
 
   const newJewellery = new Jewellery({
@@ -160,7 +186,7 @@ exports.jewelleryAdd = function (req, res) {
     purity,
     quantity,
     price,
-    product
+    product,
   });
   newJewellery
     .save()

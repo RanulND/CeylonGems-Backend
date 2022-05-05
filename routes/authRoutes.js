@@ -22,6 +22,9 @@ router.post('/forgotpassword',authController.forgotPassword);
 router.put('/resetpassword/:resetToken',authController.resetPassword);
 
 //Register User
-router.put('/signup/register',authController.registerUser);
+router.put('/signup/register/:userId',authController.registerUser);
+
+//Get User Details
+router.post('/signup/details/:userId',authController.getUserDetails);
 
 module.exports = router;

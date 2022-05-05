@@ -1,7 +1,10 @@
 const express = require('express');
+var cors = require('cors');
 const router = require('./routes'); // Routing module
 const app = express();
 const port = process.env.PORT || 5000; // Port to run
+
+app.use(cors())
 
 // Connect to database
 const mongoose = require('mongoose');

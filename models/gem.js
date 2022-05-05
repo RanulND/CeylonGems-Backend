@@ -59,7 +59,11 @@ const gemSchema = new Schema({
     },
     product : {
         type : String,
-    }
+    },
+    price : {
+        type : String,
+    }    
+
 });
 const Gem = mongoose.model('Gem', gemSchema,'gem');
 module.exports = Gem;

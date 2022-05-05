@@ -1,68 +1,75 @@
-const Admin = require("../models/admin")
+const Admin = require("../models/admin");
 const jwt = require("jsonwebtoken");
-const User = require("../models/user")
-const bcrypt = require("bcrypt")
+const User = require("../models/user");
+const bcrypt = require("bcrypt");
 const sendEmail = require("../shared/sendEmail");
 const crypto = require("crypto");
-const { ackResponse, errorResponse, successResponse } = require("../shared/responses")
-const accessTokenSecret = 'youraccesstokensecret'
+const {
+  ackResponse,
+  errorResponse,
+  successResponse,
+} = require("../shared/responses");
+const accessTokenSecret = "youraccesstokensecret";
 
 // Load input validation
 const validateRegisterInput = require("../validation/signUp");
 // const validateLoginInput = require("../../validation/login");
 
 exports.adminSignIn = function (req, res) {
-  var { email, password } = req.body
+  var { email, password } = req.body;
 
-
-    Admin.findOne({ email: email }).then(admin => {
+  Admin.findOne({ email: email })
+    .then((admin) => {
       if (admin) {
         const cmp = bcrypt.compareSync(password, admin.password);
         if (cmp) {
-          const token = jwt.sign({ email: admin.email, nic: admin.nic }, accessTokenSecret, { expiresIn: "5min" })
+          const token = jwt.sign(
+            { email: admin.email, nic: admin.nic },
+            accessTokenSecret,
+            { expiresIn: "5min" }
+          );
           // localStorage.setItem('token', token)
-          console.log(token)
+          console.log(token);
           const adminData = {
-            name: admin.firstName + ' ' + admin.lastName,
+            name: admin.firstName + " " + admin.lastName,
             email: admin.email,
             token: token,
-            nic: admin.nic
-          }
-          successResponse(res, 'Admin Login successful', adminData);
-
-        }
-        else {
-          errorResponse(res, null, 'Invalid Password', null);
+            nic: admin.nic,
+          };
+          successResponse(res, "Admin Login successful", adminData);
+        } else {
+          errorResponse(res, null, "Invalid Password", null);
         }
       } else {
-        errorResponse(res, 404, 'Admin not found', null);
+        errorResponse(res, 404, "Admin not found", null);
       }
-    }).catch(err => {
+    })
+    .catch((err) => {
       errorResponse(res, null, null, err);
     });
-  
-}
+};
 
 //user auth controller | signin
 exports.userSignIn = function (req, res) {
-  var { email, password } = req.body
+  var { email, password } = req.body;
 
-  User.findOne({ email: email }).then(user => {
-    if (user) {
-      const cmp = bcrypt.compareSync(password, user.password);
-      if (cmp) {
-        successResponse(res, 'User Login successful', user);
+  User.findOne({ email: email })
+    .then((user) => {
+      if (user) {
+        const cmp = bcrypt.compareSync(password, user.password);
+        if (cmp) {
+          successResponse(res, "User Login successful", user);
+        } else {
+          errorResponse(res, null, "Invalid Password", null);
+        }
+      } else {
+        errorResponse(res, 404, "User not found", null);
       }
-      else {
-        errorResponse(res, null, 'Invalid Password', null);
-      }
-    } else {
-      errorResponse(res, 404, 'User not found', null);
-    }
-  }).catch(err => {
-    errorResponse(res, null, null, err);
-  });
-}
+    })
+    .catch((err) => {
+      errorResponse(res, null, null, err);
+    });
+};
 
 //user auth controller | signup
 
@@ -91,7 +98,7 @@ exports.userSignUp = function (req, res) {
   }
   const { firstName, lastName, nic, phoneNumber, email, password } = req.body;
 
-  User.findOne({ email } || { nic }).then(user => {
+  User.findOne({ email } || { nic }).then((user) => {
     if (user) {
       return res.status(400).json({ email: "Email or NIC already exists" });
     } else {
@@ -101,7 +108,7 @@ exports.userSignUp = function (req, res) {
         nic,
         phoneNumber,
         email,
-        password
+        password,
       });
       // Hash password before saving in database
       bcrypt.genSalt(10, (err, salt) => {
@@ -110,8 +117,8 @@ exports.userSignUp = function (req, res) {
           newUser.password = hash;
           newUser
             .save()
-            .then(user => res.json(user))
-            .catch(err => console.log(err));
+            .then((user) => res.json(user))
+            .catch((err) => console.log(err));
         });
       });
     }
@@ -166,7 +173,7 @@ exports.forgotPassword = async (req, res, next) => {
   } catch (err) {
     next(err);
   }
-}
+};
 exports.resetPassword = async (req, res, next) => {
   const resetPasswordToken = crypto
     .createHash("sha256")
@@ -214,17 +221,13 @@ exports.registerUser = async (req, res) => {
   } else {
     var nic = req.body.nic;
 
-    User.findOneAndUpdate(
-      { nic: nic },
-      {
-        firstName: req.body.firstName,
-        lastName: req.body.lastName,
-        nic: req.body.nic,
-        phoneNumber: req.body.phoneNumber,
-        address: req.body.address,
-        gender: req.body.gender,
-      }
-    )
+    User.findByIdAndUpdate(req.params.userId, {
+      firstName: req.body.firstName,
+      lastName: req.body.lastName,
+      phoneNumber: req.body.phoneNumber,
+      email: req.body.email,
+      photos: req.body.photos,
+    })
       .then((user) => {
         if (user) {
           res.send(user);
@@ -236,69 +239,28 @@ exports.registerUser = async (req, res) => {
       })
       .catch((err) => {
         return res.status(500).send({
-          message: "Error in updating the User data"+err,
+          message: "Error in updating the User data" + err,
         });
       });
-    // User.findOneAndUpdate( req.body.nic, {
-    //   status : req.body.status,
-    //   firstName : req.body.firstName,
-    //   lastName : req.body.lastName,
-    //   nic : req.body.nic,
-    //   phoneNumber : req.body.phoneNumber,
-    //   address : req.body.address,
-    //   gender : req.body.gender
-    // })
-    // .then(user => {
-    //   if(!user){
-    //     return res.status(404).send({
-    //       message: "User is not found !"
-    //     })
-    //   }
-    //   else{
-    //     res.send(user);
-    //   }
-    // })
-    // .catch(err => {
-    //   return res.status(500).send({
-    //     message : "Error in updating the User data"
-    //   })
-    // })
   }
 };
-  //   const resetPasswordToken = crypto
-  //     .createHash("sha256")
-  //     .update(req.params.resetToken)
-  //     .digest("hex");
 
-  //   try {
-  //     const user = await User.findOne({
-  //       resetPasswordToken,
-  //       resetPasswordExpire: { $gt: Date.now() },
-  //     });
+//Get user details
+exports.getUserDetails = function (req, res) {
+  User.findById(req.params.userId)
+    .then((details) => {
+      if (details) {
+        successResponse(res, details);
+      } else {
+        return res.status(404).send({
+          message: "User not found !",
+        });
+      }
+    })
+    .catch((err) => {
+      return res.status(500).send({
+        message: "Error in finding the User data " + err,
+      });
+    });
+};
 
-  //     if (!user) {
-  //       return next(new errorResponse("Invalid Reset Token", 400));
-  //     }
-
-  //     user.password = req.body.password;
-  //     user.resetPasswordToken = undefined;
-  //     user.resetPasswordExpire = undefined;
-
-  //     await user.save();
-
-  //     res.status(201).json({
-  //       success: true,
-  //       data: "Password Updated Success",
-  //       token: user.getSignedJwtToken(),
-  //     });
-  //   } catch (err) {
-  //     next(err);
-  //   }
-
-  //   const sendToken = (user, statusCode, res) => {
-  //   const token = user.getSignedJwtToken();
-  //   res.status(statusCode).json({ sucess: true, token });
-  // };
-
-// };
-  

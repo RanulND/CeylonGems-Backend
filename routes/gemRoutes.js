@@ -10,7 +10,7 @@ router.post('/add', productController.gemAdd);
 //Get gem type
 router.post('/type', productController.gemType);
 // Edit gem details
-router.put('/edit',productController.updateGem);
+router.put('/edit/:detailId',productController.updateGem);
 //Get product details
 router.post('/details/:detailId',productController.getProductDetails);
 

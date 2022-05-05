@@ -6,11 +6,9 @@ const crypto = require("crypto");
 const userSchema = new Schema({
     firstName: {
         type: String,
-        required: true
     },
     lastName: {
         type: String,
-        required: true
     },
     nic: {
         type: String,
@@ -19,18 +17,19 @@ const userSchema = new Schema({
     },
     phoneNumber: {
         type: String,
-        required: true
     },
     email : {
         type : String,
         unique:true,
-        required:true
     },
     password: {
         type: String,
         required: true,
         resetPasswordToken: String,
         resetPasswordExpire: Date,
+    },
+    photos : {
+        type : String,
     },
     // roles : [
     //     {
