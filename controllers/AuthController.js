@@ -108,7 +108,6 @@ exports.userSignUp = function (req, res) {
   var phoneNumber = value.phoneNumber;
   var email = req.body.email;
   var password = req.body.password;
-  // const { email, password } = req.body;
 
   User.findOne({ email }).then(user => {
     if (user) {
