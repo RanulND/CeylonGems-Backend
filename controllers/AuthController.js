@@ -13,25 +13,25 @@ const Joi = require('joi');
 exports.adminSignIn = function (req, res) {
   var email = req.body.email;
   var password = req.body.password;
-  var status = false
+  // var status = false
   Admin.findOne({ email: email }).then(admin => {
     if (admin) {
       const cmp = bcrypt.compareSync(password, admin.password);
       if (cmp) {
-        status = true
-        successResponse(res, 'Admin Login successful', status);
+        // status = true
+        return sendToken(admin, 200, res);
       }
       else {
-        status = false
-        errorResponse(res, 200, 'Invalid Password', status);
+        // status = false
+        errorResponse(res, null, 'Invalid Password', null);
       }
 
     } else {
-      status = false
-      errorResponse(res, 200, 'Admin not found', status);
+      // status = false
+      errorResponse(res, null, 'Admin not found', null);
     }
   }).catch(err => {
-    errorResponse(res, null, null, err);
+    errorResponse(res, null, 'meth', err);
   });
 }
 //signIn Validation part

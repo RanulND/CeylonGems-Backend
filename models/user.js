@@ -43,11 +43,12 @@ const userSchema = new Schema({
     password: {
         type: String,
         required: true,
-    
     },
     verified : {
       type :Boolean,
- 
+    },
+    isAvtivated : {
+        type: Boolean
     },
     roles: rolesSchema
     
