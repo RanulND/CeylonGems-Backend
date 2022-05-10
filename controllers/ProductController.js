@@ -67,6 +67,15 @@ exports.gemType = function (req, res) {
   });
 };
 
+exports.getGemType = async(_, res) => {
+    try {
+        const docs = await GemType.find({});
+        return successResponse(res, docs, 'Gems fetched successfully.');
+    } catch (err) {
+        return generalErrorPayloadResponse(res, err);
+    }
+};
+
 //Get product details
 exports.getProductDetails = function (req, res) {
   Gem.findById(req.params.detailId)
