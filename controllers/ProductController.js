@@ -11,12 +11,7 @@ const {
 //add Gem
 
 exports.gemAdd = function (req, res) {
-  // Form validation
-  // const { errors, isValid } = validateRegisterInput(req.body);
-  // Check validation
-  // if (!isValid) {
-  //   return res.status(400).json(errors);
-  // }
+
   const {
     status,
     title,
@@ -179,5 +174,3 @@ exports.getJewelleryDetails = function (req,res){
 
 })
 }
-// const email_id = req.body.id;
-// User.findOne({})
