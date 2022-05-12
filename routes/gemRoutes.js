@@ -1,6 +1,8 @@
 // Product router
 const app = require('express');
+const { required } = require('joi');
 const router = app.Router();
+const gemController = require('../controllers/GemController');
 
 // Product controller
 const productController = require('../controllers/ProductController');
@@ -21,5 +23,7 @@ router.get('/home-gems',gemController.getThreeAuctionGems);
 router.get('/home-gems',gemController.getThreeDirectGems);
 
 router.get('/:id', gemController.getProduct);
+
+router.post('/getgem', gemController.getGemDetails);
 
 module.exports = router;

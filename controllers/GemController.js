@@ -84,3 +84,15 @@ exports.getProduct = function (req,res){
    }
  });
 }
+
+exports.getGemDetails = function (req,res){
+  const email_id = req.body.id;
+  Gem.find({email : email_id}).then(gem=> {
+   if(gem){
+       return res.json(gem)
+   }
+
+
+})
+}
+

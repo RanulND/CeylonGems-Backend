@@ -11,12 +11,7 @@ const {
 //add Gem
 
 exports.gemAdd = function (req, res) {
-  // Form validation
-  // const { errors, isValid } = validateRegisterInput(req.body);
-  // Check validation
-  // if (!isValid) {
-  //   return res.status(400).json(errors);
-  // }
+
   const {
     status,
     title,
@@ -167,3 +162,15 @@ exports.jewelleryAdd = function (req, res) {
     .then((jewellery) => res.json(jewellery))
     .catch((err) => console.log(err));
 };
+
+
+exports.getJewelleryDetails = function (req,res){
+  const email_id = req.body.id;
+  Jewellery.find({email : email_id}).then(jewellery=> {
+   if(jewellery){
+       return res.json(jewellery)
+   }
+
+
+})
+}

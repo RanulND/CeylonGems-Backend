@@ -3,7 +3,6 @@ const Schema = mongoose.Schema
 const bcrypt = require("bcrypt");
 const crypto = require("crypto");
 const jwt = require ("jsonwebtoken");
-
 // const { boolean } = require('joi');
 
 const rolesSchema = new Schema({
