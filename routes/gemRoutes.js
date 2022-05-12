@@ -4,6 +4,7 @@ const router = app.Router();
 
 // Product controller
 const productController = require('../controllers/ProductController');
+const gemController = require('../controllers/gemController');
 
 // Gem add
 router.post('/add', productController.gemAdd);
