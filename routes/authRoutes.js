@@ -28,9 +28,4 @@ router.post('/signup', authController.userSignUp);
 //User Email Verification
 router.post('/verifyuseremail/:verifyToken',authController.emailVerification);
 
-//authentication
-router.get('/',protect, authController.getPrivateRoute);
-//Register User
-//router.put('/signup/register',authController.registerUser);
-
 module.exports = router;
