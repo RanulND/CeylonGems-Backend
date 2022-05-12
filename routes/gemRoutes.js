@@ -22,4 +22,6 @@ router.get('/home-gems',gemController.getThreeDirectGems);
 
 router.get('/:id', gemController.getProduct);
 
+router.post('/gem-count-by-id', gemController.gemCountBySeller)
+
 module.exports = router;

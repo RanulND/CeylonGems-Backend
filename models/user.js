@@ -47,9 +47,6 @@ const userSchema = new Schema({
     verified : {
       type :Boolean,
     },
-    isAvtivated : {
-        type: Boolean
-    },
     roles: rolesSchema
     
 });

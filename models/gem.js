@@ -1,5 +1,6 @@
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
+const User = require('./user.js')
 
 const gemSchema = new Schema({
     status : { 
@@ -59,6 +60,10 @@ const gemSchema = new Schema({
     },
     product : {
         type : String,
+    },
+    seller_id: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: User
     }
 });
 const Gem = mongoose.model('Gem', gemSchema,'gem');

@@ -1,5 +1,6 @@
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
+const User = require('./user')
 
 const jewellerySchema = new Schema({
     status : { 
@@ -28,9 +29,12 @@ const jewellerySchema = new Schema({
     price : {
         type : Number,
     },
-    
     product : {
         type : String,
+    },
+    seller_id : {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: User
     }
 });
 const Jewellery = mongoose.model('Jewellery', jewellerySchema,'jewellery');
