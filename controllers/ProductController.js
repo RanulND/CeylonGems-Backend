@@ -167,3 +167,17 @@ exports.jewelleryAdd = function (req, res) {
     .then((jewellery) => res.json(jewellery))
     .catch((err) => console.log(err));
 };
+
+
+exports.getJewelleryDetails = function (req,res){
+  const email_id = req.body.id;
+  Jewellery.find({email : email_id}).then(jewellery=> {
+   if(jewellery){
+       return res.json(jewellery)
+   }
+
+
+})
+}
+// const email_id = req.body.id;
+// User.findOne({})
