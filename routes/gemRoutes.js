@@ -16,7 +16,8 @@ router.put('/edit',productController.updateGem);
 router.post('/details/:detailId',productController.getProductDetails);
 
 //get all gems
-router.get('/',gemController.getAllGems);
+router.get('/auction',gemController.getAllAuctionGems);
+router.get('/direct',gemController.getAllDirectGems);
 router.get('/home-gems1',gemController.getThreeAuctionGems);
 router.get('/home-gems2',gemController.getThreeDirectGems);
 router.get('/home-gems3',gemController.getThreeJewellery);

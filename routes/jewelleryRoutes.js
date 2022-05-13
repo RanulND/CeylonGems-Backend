@@ -11,5 +11,6 @@ router.post('/add', productController.jewelleryAdd);
 router.put('/edit',productController.updateJewellery);
 
 router.get('/:id', gemController.getJewelryProduct);
+router.get('/',gemController.getAllJewelry);
 
 module.exports = router;

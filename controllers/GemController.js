@@ -45,9 +45,16 @@ exports.gemAdd = function (req, res) {
   });
 };
 
-exports.getAllGems = function (req,res){
+exports.getAllAuctionGems = function (req,res){
+  Gem.find({status:true,format:'Auction'}).then((gems)=>{
+    res.json(gems)
+  }).catch((err)=>{
+    console.log(err)
+  })
+}
 
-  Gem.find({status:true}).then((gems)=>{
+exports.getAllDirectGems = function (req,res){
+  Gem.find({status:true,format:'Direct'}).then((gems)=>{
     res.json(gems)
   }).catch((err)=>{
     console.log(err)
@@ -114,3 +121,10 @@ exports.getSellerGems = function (req,res){
     console.log(err)
   });
 }
+  exports.getAllJewelry = function (req,res){
+    Jewellery.find({status:true}).then((jewelry)=>{
+      res.json(jewelry)
+    }).catch((err)=>{
+      console.log(err)
+    })
+  }
