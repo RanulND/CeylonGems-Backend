@@ -100,22 +100,7 @@ exports.userSignIn = function (req, res) {
 //   }
 // }
 
-
-
-
-
-
-
-
-
-
-
-//signUp validation
-
-//user auth controller | signup 
-
-
-
+//signUp validation 
 const signupvalidate = (data) => {
   const schema = Joi.object({
     firstName: Joi.string().label("First Name").allow('', null).empty(['', null]).default('firstName'),
@@ -129,7 +114,6 @@ const signupvalidate = (data) => {
 };
 
 //user auth controller | signup 
-
 exports.userSignUp = function (req, res) {
 
   const { error, value } = signupvalidate(req.body);
@@ -143,7 +127,6 @@ exports.userSignUp = function (req, res) {
   var phoneNumber = value.phoneNumber;
   var email = req.body.email;
   var password = req.body.password;
-  // const { email, password } = req.body;
 
   User.findOne({ email }).then(user => {
     if (user) {
@@ -155,7 +138,6 @@ exports.userSignUp = function (req, res) {
         return errorResponse(res, 400, "NIC Already exists", null);
           
       }
-    
     
     else {
       const newUser = new User({
@@ -216,16 +198,12 @@ const sendVerificationEmail = async ({ _id, email }, res) => {
     });
     await newUserVerification.save();
 
-
-
     // const verifyToken = userVerification.getVerifyEmailToken();
     // const verifyEmailExpire = userVerification.getVerifyEmailTokenExpire();
     // const userVerification = await UserVerification.findOne({ userId });
 
-
     // Create verification url to email for provided email
     const verifyEmailUrl = `http://localhost:3000/verifyemail/${verifyToken}`;
-
 
     // HTML Message
     const message = `
@@ -293,8 +271,6 @@ exports.emailVerification = async (req, res, next) => {
       user.save();
       successResponse(res, 'User Verified', user);
     }).catch(err => console.log(err));
-
-
 
   } catch (err) {
     next(err);
