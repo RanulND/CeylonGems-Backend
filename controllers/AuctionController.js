@@ -20,6 +20,7 @@ exports.auctionAdd = function (req, res) {
     .save()
     .then((auction) => res.json(auction))
     .catch((err) => console.log(err));
+}
 
 exports.getAllAuctions = function (req,res){
 

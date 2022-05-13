@@ -1,4 +1,5 @@
 const Gem = require("../models/gem");
+const Jewellery = require("../models/jewellery")
 const GemType = require("../models/gemType");
 
 const {
@@ -44,9 +45,16 @@ exports.gemAdd = function (req, res) {
   });
 };
 
-exports.getAllGems = function (req,res){
+exports.getAllAuctionGems = function (req,res){
+  Gem.find({status:true,format:'Auction'}).then((gems)=>{
+    res.json(gems)
+  }).catch((err)=>{
+    console.log(err)
+  })
+}
 
-  Gem.find({status:true}).then((gems)=>{
+exports.getAllDirectGems = function (req,res){
+  Gem.find({status:true,format:'Direct'}).then((gems)=>{
     res.json(gems)
   }).catch((err)=>{
     console.log(err)
@@ -55,7 +63,7 @@ exports.getAllGems = function (req,res){
 }
 
 exports.getThreeAuctionGems = function (req,res){
-  const query = {status:true , format:'Auction-Style'};
+  const query = {status:true , format:'Auction'};
   const sort = { $natural: -1 };
   const limit = 3;
   Gem.find(query).sort(sort).limit(limit).then((gems)=>{
@@ -65,7 +73,7 @@ exports.getThreeAuctionGems = function (req,res){
   });
 }
 exports.getThreeDirectGems = function (req,res){
-  const query = {status:true , format:'test'};
+  const query = {status:true , format:'Direct'};
   const sort = { $natural: -1 };
   const limit = 3;
   Gem.find(query).sort(sort).limit(limit).then((gems)=>{
@@ -74,8 +82,18 @@ exports.getThreeDirectGems = function (req,res){
     console.log(err)
   });
 }
+exports.getThreeJewellery = function (req,res){
+  const query = {status:true};
+  const sort = { $natural: -1 };
+  const limit = 3;
+  Jewellery.find(query).sort(sort).limit(limit).then((gems)=>{
+    res.json(gems)
+  }).catch((err)=>{
+    console.log(err)
+  });
+}
 
-exports.getProduct = function (req,res){
+exports.getGemProduct = function (req,res){
  Gem.findById(req.params.id).then(product =>{
    if(product){
      res.json(product)
@@ -84,6 +102,32 @@ exports.getProduct = function (req,res){
    }
  });
 }
+exports.getJewelryProduct = function (req,res){
+  Jewellery.findById(req.params.id).then(product =>{
+    if(product){
+      res.json(product)
+    } else {
+     return errorResponse(res, 404,res.err, null)
+    }
+  });
+ }
+
+exports.getSellerGems = function (req,res){
+  const query = {seller_id:req.params.seller_id };
+  const sort = { $natural: -1 };
+  Gem.find(query).sort(sort).then((gems)=>{
+    res.json(gems)
+  }).catch((err)=>{
+    console.log(err)
+  });
+}
+  exports.getAllJewelry = function (req,res){
+    Jewellery.find({status:true}).then((jewelry)=>{
+      res.json(jewelry)
+    }).catch((err)=>{
+      console.log(err)
+    })
+  }
 
 exports.getGemDetails = function (req,res){
   const email_id = req.body.id;

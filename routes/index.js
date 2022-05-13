@@ -9,6 +9,7 @@ const AllUserRoutes = require('./AllUserRoutes');
 const GemRoutes = require('./gemRoutes');
 const JewelleryRoutes = require('./jewelleryRoutes');
 const AuctionRoutes=require('./AuctionRoutes')
+const CartRoutes = require('./cartRoutes');
 
 router.use('/auth', AuthRoutes);
 router.use('/admin', AdminRoutes) 
@@ -18,7 +19,7 @@ router.use('/seller', SellerRoutes)
  router.use('/gem', GemRoutes);
  router.use('/jewellery',JewelleryRoutes);
  router.use('/auction', AuctionRoutes);
-
+ router.use('/cart', CartRoutes )
 
 
 

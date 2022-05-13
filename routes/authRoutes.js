@@ -19,8 +19,8 @@ router.post('/signup', authController.userSignUp);
 //User forget Password
  router.post('/forgotpassword',authController.forgotPassword);
 
-// //User reset Password
- //router.put('/resetpassword/:resetToken',authController.resetPassword);
+//User reset Password
+// router.put('/resetpassword/:resetToken',authController.resetPassword);
 
 //send verify email
 // router.post('/verifyuseremail',authController.sendVerificationEmail);

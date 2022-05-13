@@ -4,22 +4,20 @@ const router = app.Router();
 
 // Product controller
 const productController = require('../controllers/ProductController');
-
+const gemController = require('../controllers/GemController')
 //Jewellery add
 router.post('/add', productController.jewelleryAdd);
 // Edit gem details
 router.put('/edit',productController.updateJewellery);
 
-// module.exports = router;
+router.get('/:id', gemController.getJewelryProduct);
+router.get('/all-jewellery',gemController.getAllJewelry);
 
- const express = require('express');
-
-//const router = express.Router();
-const Jewellery = require('../models/jewellery');
-
-//importing...
 const GetJewelleryController = require('../controllers/ProductController')
-
 router.post('/', GetJewelleryController.getJewelleryDetails);
 
 module.exports = router;
+
+
+
+
