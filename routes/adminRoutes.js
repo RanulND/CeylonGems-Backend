@@ -16,4 +16,6 @@ router.post('/remove-admin', adminController.removeAdmin)
 
 router.get('/get-users', shared.getallusers)
 
+router.get('/get-count', adminController.counts)
+
 module.exports = router;

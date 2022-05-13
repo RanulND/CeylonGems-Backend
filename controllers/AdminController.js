@@ -1,5 +1,7 @@
 const Admin = require('../models/admin')
 const User = require('../models/user')
+const Order = require('../models/order')
+const Auction = require('../models/auction')
 const { ackResponse, errorResponse, successResponse } = require('../shared/responses')
 const bcrypt = require("bcrypt")
 
@@ -43,3 +45,28 @@ exports.removeAdmin = function (req, res) {
         errorResponse(res, 403, "user deletion unsuccessful", err)
     })
 }
+
+
+
+exports.counts = function (req, res) {
+        User.count().then(userCount => {
+            Auction.count().then(auctionCount => {
+                Order.count().then(orderCount => {
+
+                    const data = {
+                        users: userCount,
+                        auctions: auctionCount,
+                        orders: orderCount
+                    }
+                    
+                    successResponse(res, "Counts receifved successfully", data)
+                }).catch(err => {
+                    errorResponse(res, null, null, err)
+                })
+            }).catch(err => {
+                errorResponse(res, null, null, err)
+            })
+        }).catch(err => {
+            errorResponse(res, null, null, err)
+        })
+    }

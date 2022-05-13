@@ -17,7 +17,7 @@ router.post('/signin', authController.userSignIn);
 router.post('/signup', authController.userSignUp);
 
 //User forget Password
-router.post('/forgotpassword',authController.forgotPassword);
+ router.post('/forgotpassword',authController.forgotPassword);
 
 //User reset Password
 // router.put('/resetpassword/:resetToken',authController.resetPassword);
@@ -27,10 +27,5 @@ router.post('/forgotpassword',authController.forgotPassword);
 
 //User Email Verification
 router.post('/verifyuseremail/:verifyToken',authController.emailVerification);
-
-//authentication
-router.get('/',protect, authController.getPrivateRoute);
-//Register User
-// router.put('/signup/register',authController.registerUser);
 
 module.exports = router;

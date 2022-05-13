@@ -5,26 +5,20 @@ const User = require("../models/user")
 exports.protect = async (req, res, next) => {
   let token;
 
-  if (
-    req.headers.authorization &&
-    req.headers.authorization.startsWith("Bearer")
-  ) {
+  if ( req.headers.authorization && req.headers.authorization.startsWith("Bearer")) {
     token = req.headers.authorization.split(" ")[1];
   }
 
   if (!token) {
-   
-    return next (errorResponse(res, 401, 'Access Denied. Not authorized to access this route', null));
+    return errorResponse(res, 401, 'Access Denied. Not authorized to access this route', null);
   }
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
     const user = await User.findById(decoded.id);
 
     if (!user) {
-     
-      return next(errorResponse(res, 404, 'No user found with this id', null));
+      return errorResponse(res, 401, 'Access Denied. Not authorized to access this route', null);
     }
 
     req.user = user;
