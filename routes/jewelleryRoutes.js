@@ -12,10 +12,7 @@ router.put('/edit',productController.updateJewellery);
 
 // module.exports = router;
 
-
  const express = require('express');
-
-
 
 //const router = express.Router();
 const Jewellery = require('../models/jewellery');
