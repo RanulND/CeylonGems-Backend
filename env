@@ -1,0 +1,8 @@
+# JWT_SECRET=07d926b76c250892538ed4902348fae62a7ac6a71363ea9bcbdaaa9dde8969a806c664
+# JWT_EXPIRE=10min
+# EMAIL_SERVICE=gmail
+# EMAIL_HOST=smtp.gmail.com
+# EMAIL_PORT=465
+# EMAIL_USERNAME=ceylongemsteam@gmail.com
+# EMAIL_PASSWORD=ceylongems2022
+# EMAIL_FROM=ceylongemsteam@gmail.com
