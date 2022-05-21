@@ -17,10 +17,10 @@ router.post('/signin', authController.userSignIn);
 router.post('/signup', authController.userSignUp);
 
 //User forget Password
-router.post('/forgotpassword',authController.forgotPassword);
+ router.post('/forgotpassword',authController.forgotPassword);
 
 //User reset Password
-router.put('/resetpassword/:resetToken',authController.resetPassword);
+// router.put('/resetpassword/:resetToken',authController.resetPassword);
 
 //Register User
 router.put('/signup/register/:userId',authController.registerUser);

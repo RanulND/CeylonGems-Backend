@@ -1,69 +1,71 @@
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
+const User = require('./user')
 
 const gemSchema = new Schema({
-    status : { 
-        type : Boolean,
+    status: {
+        type: Boolean,
     },
-    title : { 
-        type : String,
-        required:true
+    seller_id: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: User,
+        required: true
     },
-    category : { 
-        type : String,
-        required:true
+    title: {
+        type: String,
+        required: true
     },
-    photos : {
-        type : String,
-        required : true
+    category: {
+        type: String,
+        required: true
     },
-    description : { 
-        type : String,
-        required:true
+    photos: {
+        type: String,
+        required: true
     },
-    size : {
-        type : String,
-        required:true
+    description: {
+        type: String,
+        required: true
     },
-    weight : {
-        type : String,
-        required:true
+    size: {
+        type: String,
+        required: true
     },
-    hardness : {
-        type : String,
-        required:true
+    weight: {
+        type: String,
+        required: true
     },
-    colour : {
-        type : String,
-        required:true
+    hardness: {
+        type: String,
+        required: true
     },
-    origin : {
-        type : String,
+    colour: {
+        type: String,
+        required: true
     },
-    quantity : {
-        type : Number,
-        require : true
+    origin: {
+        type: String,
     },
-    gem_certificate : {
-        type : String,
+    quantity: {
+        type: Number,
+        require: true
     },
-    format : {
-        type : String,
-        required : true
+    gem_certificate: {
+        type: String,
     },
-    base_value : {
-        type : Number,
+    format: {
+        type: String,
+        required: true
     },
-    auc_duration : {
-        type : Number,
+    base_value: {
+        type: Number,
     },
-    product : {
-        type : String,
+    auc_duration: {
+        type: Number,
     },
-    price : {
-        type : String,
-    }    
-
+    product: {
+        type: String,
+    }
 });
-const Gem = mongoose.model('Gem', gemSchema,'gem');
+const Gem = mongoose.model('Gem', gemSchema, 'gem');
 module.exports = Gem;
