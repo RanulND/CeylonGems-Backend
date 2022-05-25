@@ -74,7 +74,7 @@ exports.userSignIn = function (req, res) {
   User.findOne({ email: email }).then(user => {
 
     if (user) {
-      if (user.verified) {
+    
         // const { error} =isNotVerified(email,res);
         const cmp = bcrypt.compareSync(password, user.password);
         if (cmp) {
@@ -83,9 +83,7 @@ exports.userSignIn = function (req, res) {
         else {
          return errorResponse(res, null, 'Invalid Password', null);
         }
-      } else {
-       return errorResponse(res, null, 'Your account has not been verified. Please check your email to verify your account', null);
-      }
+      
 
     } else {
      return errorResponse(res, 404, 'User not found. Please Sign Up', null);
@@ -102,10 +100,10 @@ exports.userSignUp = function (req, res) {
   if (error) {
     return errorResponse(res, 404, error.details[0].message, null);
   }
-  var firstName = value.firstName;
-  var lastName = value.lastName;
+  var firstName = req.body.firstName;
+  var lastName = req.body.lastName;
   var nic = req.body.nic;
-  var phoneNumber = value.phoneNumber;
+  var phoneNumber = req.body.phoneNumber;
   var email = req.body.email;
   var password = req.body.password;
 
@@ -233,6 +231,12 @@ exports.emailVerification = async (req, res, next) => {
   } catch (err) {
     return (err);
   }
+}
+
+exports.sendVerificationEmail = async (req, res, next) => {
+  var email = req.body.email;
+  var id = req.body.id;
+  sendVerificationEmail({ id , email }, res);
 }
 
 //  User Forgot Password Initialization

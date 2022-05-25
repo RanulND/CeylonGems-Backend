@@ -20,10 +20,10 @@ router.post('/signup', authController.userSignUp);
  router.post('/forgotpassword',authController.forgotPassword);
 
 //User reset Password
-// router.put('/resetpassword/:resetToken',authController.resetPassword);
+ router.put('/resetpassword/:resetToken',authController.resetPassword);
 
 //send verify email
-// router.post('/verifyuseremail',authController.sendVerificationEmail);
+ router.post('/verifyuseremail',authController.sendVerificationEmail);
 
 //User Email Verification
 router.post('/verifyuseremail/:verifyToken',authController.emailVerification);
