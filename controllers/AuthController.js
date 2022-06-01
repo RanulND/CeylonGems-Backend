@@ -342,5 +342,58 @@ exports.resetPassword = async (req, res, next) => {
   } catch (err) {
     next(err);
   }
+
+
 };
 
+
+// Get register user details
+exports.registerUser = async (req, res) => {
+  if (!req.body) {
+    return res.status(400).send({
+      message: "Content must not be empty",
+    });
+  } else {
+    var nic = req.body.nic;
+
+    User.findByIdAndUpdate(req.params.userId, {
+      firstName: req.body.firstName,
+      lastName: req.body.lastName,
+      phoneNumber: req.body.phoneNumber,
+      email: req.body.email,
+      photos: req.body.photos,
+    })
+      .then((user) => {
+        if (user) {
+          res.send(user);
+        } else {
+          return res.status(404).send({
+            message: "User not found !",
+          });
+        }
+      })
+      .catch((err) => {
+        return res.status(500).send({
+          message: "Error in updating the User data" + err,
+        });
+      });
+  }
+};
+//Get user details
+exports.getUserDetails = function (req, res) {
+  User.findById(req.params.userId)
+    .then((details) => {
+      if (details) {
+        successResponse(res, details);
+      } else {
+        return res.status(404).send({
+          message: "User not found !",
+        });
+      }
+    })
+    .catch((err) => {
+      return res.status(500).send({
+        message: "Error in finding the User data " + err,
+      });
+    });
+};

@@ -39,6 +39,9 @@ const userSchema = new Schema({
         unique:true,
         required:true
     },
+    photos: {
+        type: String
+    },
     password: {
         type: String,
         required: true,
