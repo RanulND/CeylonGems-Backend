@@ -90,7 +90,7 @@ exports.gemCountBySeller = function (req, res) {
   Gem.countDocuments({ seller_id: id }).then(notSoldCount => {
     Gem.countDocuments({ seller_id: id, status: false }).then(soldCount => {
       const counts = {
-        sold : soldCount,
+        sold: soldCount,
         notSold: notSoldCount
       }
       successResponse(res, 'fetched gem count by sellerID', counts)
