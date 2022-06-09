@@ -347,6 +347,7 @@ exports.resetPassword = async (req, res, next) => {
 
 // Get register user details
 exports.registerUser = async (req, res) => {
+  console.log("called")
   if (!req.body) {
     return res.status(400).send({
       message: "Content must not be empty",
@@ -364,6 +365,7 @@ exports.registerUser = async (req, res) => {
       .then((user) => {
         if (user) {
           res.send(user);
+          console.log("done");
         } else {
           return res.status(404).send({
             message: "User not found !",
