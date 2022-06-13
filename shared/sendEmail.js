@@ -11,12 +11,7 @@ const sendGrid = require("@sendgrid/mail")
 
 const sendEmail = (options) => {
 
-EMAIL_SERVICE="SendGrid"
-EMAIL_HOST="smtp.sendgrid.net"
-EMAIL_PORT=465
-EMAIL_USERNAME="apikey"
-EMAIL_PASSWORD="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"
-EMAIL_FROM="ceylongemsteam@gmail.com"
+
 
   const transporter = nodemailer.createTransport({
     host: EMAIL_HOST,
