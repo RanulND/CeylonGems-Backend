@@ -1,18 +1,35 @@
 const nodemailer = require("nodemailer");
+const sendGrid = require("@sendgrid/mail")
+
+// EMAIL_SERVICE="gmail"
+// EMAIL_HOST="smtp.gmail.com"
+// EMAIL_PORT=465
+// EMAIL_USERNAME="ceylongemsteam@gmail.com"
+// EMAIL_PASSWORD="ceylonRuby2022"
+// EMAIL_FROM="ceylongemsteam@gmail.com"
+
 
 const sendEmail = (options) => {
+
+EMAIL_SERVICE="SendGrid"
+EMAIL_HOST="smtp.sendgrid.net"
+EMAIL_PORT=465
+EMAIL_USERNAME="apikey"
+EMAIL_PASSWORD="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"
+EMAIL_FROM="ceylongemsteam@gmail.com"
+
   const transporter = nodemailer.createTransport({
-    host: process.env.EMAIL_HOST,
-    port: process.env.EMAIL_PORT,
+    host: EMAIL_HOST,
+    port: EMAIL_PORT,
     secure: true,
     auth: {
-      user: process.env.EMAIL_USERNAME,
-      pass: process.env.EMAIL_PASSWORD,
+      user: EMAIL_USERNAME,
+      pass:EMAIL_PASSWORD,
     },
   });
 
   const mailOptions = {
-    from: process.env.EMAIL_FROM,
+    from: EMAIL_FROM,
     to: options.to,
     subject: options.subject,
     html: options.text,
@@ -20,6 +37,7 @@ const sendEmail = (options) => {
 
   return transporter.sendMail(mailOptions);
 };
+
 
 module.exports = sendEmail;
 

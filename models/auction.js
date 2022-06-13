@@ -29,6 +29,9 @@ const auctionSchema = new Schema({
     itemImage: {
         type: String,
     },
+    winningBid: {
+        type: String,
+    },
 
 });
 const Auction = mongoose.model('Auction', auctionSchema, 'auction');

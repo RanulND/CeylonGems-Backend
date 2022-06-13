@@ -62,6 +62,7 @@ exports.gemType = function (req, res) {
   });
 };
 
+
 //Get product details
 exports.getProductDetails = function (req, res) {
   Gem.findById(req.params.detailId).then((details) => {

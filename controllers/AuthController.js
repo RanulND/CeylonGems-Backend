@@ -233,10 +233,56 @@ exports.emailVerification = async (req, res, next) => {
   }
 }
 
+
 exports.sendVerificationEmail = async (req, res, next) => {
   var email = req.body.email;
   var id = req.body.id;
-  sendVerificationEmail({ id , email }, res);
+  try {
+    const verifyToken = crypto.randomBytes(20).toString("hex");
+    const verifyEmailExpire = Date.now() + 24 * 60 * (60 * 1000); //24hrs
+
+    //set values in userVerification model
+    const newUserVerification = new UserVerification({
+      userId: id,
+      // Verify Email Token Gen and add to database hashed (private) version of token
+      verifyEmailToken: crypto.createHash("sha256").update(verifyToken).digest("hex"),
+      createdAt: Date.now(),
+      verifyEmailExpire: verifyEmailExpire
+    });
+    await newUserVerification.save();
+
+    // Create verification url to email for provided email
+    const verifyEmailUrl = `http://localhost:3000/verifyemail/${verifyToken}`;
+
+    // HTML Message
+    const message = `
+        <h1>Please verify your email address.</h1>
+        <p>To verify this email address belongs to you, please use the verification link below to log in:</p>
+        <a href=${verifyEmailUrl} clicktracking=off>${verifyEmailUrl}</a>`;
+
+    try {
+      await sendEmail({
+        to: email,
+        subject: "CeylonRuby - Email Verification",
+        text: message,
+      });
+
+      return successResponse(res,
+        "Verification Email Sent.Thank you for Sign Up. Please check your email to verify your account",
+        null);
+
+    } catch (err) {
+      console.log(err);
+
+      UserVerification.verifyEmailToken = undefined;
+      UserVerification.verifyEmailExpire = undefined;
+
+      await UserVerification.save();
+      return errorResponse(res, 400, "Verification Email could not be sent", null);
+    }
+  } catch (err) {
+    return errorResponse(res, 400, "Something went wrong", null);
+  }
 }
 
 //  User Forgot Password Initialization
