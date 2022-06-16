@@ -31,7 +31,7 @@ exports.adminSignIn = function (req, res) {
       errorResponse(res, null, 'Admin not found', null);
     }
   }).catch(err => {
-    errorResponse(res, null, 'meth', err);
+    errorResponse(res, null, null, err);
   });
 }
 //signIn Validation part

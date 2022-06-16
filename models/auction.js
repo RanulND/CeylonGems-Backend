@@ -30,6 +30,6 @@ const auctionSchema = new Schema({
         type: String,
     },
 
-});
+}, {timestamps: true});
 const Auction = mongoose.model('Auction', auctionSchema, 'auction');
 module.exports = Auction;

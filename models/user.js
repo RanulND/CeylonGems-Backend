@@ -48,7 +48,7 @@ const userSchema = new Schema({
     },
     roles: rolesSchema
     
-});
+}, { timestamps: true });
 
 userSchema.methods.getSignedJwtToken = function () {
     return jwt.sign({ id: this._id, ...this._doc }, process.env.JWT_SECRET, {

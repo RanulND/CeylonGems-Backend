@@ -10,5 +10,6 @@ router.post('/add', auctionController.auctionAdd);
 router.get('/',auctionController.getAllAuctions);
 
 router.post('/getauction', auctionController.getAuctionDetails);
+router.get('/getAuctionsByDate', auctionController.getAuctionsByDate)
 
 module.exports = router;

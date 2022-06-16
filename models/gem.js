@@ -62,10 +62,6 @@ const gemSchema = new Schema({
     },
     product : {
         type : String,
-    },
-    seller_id: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: User
     }
 });
 const Gem = mongoose.model('Gem', gemSchema, 'gem');
