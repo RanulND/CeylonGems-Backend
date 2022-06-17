@@ -9,6 +9,8 @@ const JewelleryRoutes = require('./jewelleryRoutes');
 const AuctionRoutes=require('./AuctionRoutes')
 const CartRoutes = require('./cartRoutes');
 const OrderRoutes = require('./OrderRoutes');
+const BidRoutes = require('./bidRoutes');
+const PaymentRoutes = require('./paymentRoutes');
 
 router.use('/auth', AuthRoutes);
 router.use('/admin', AdminRoutes) 
@@ -17,6 +19,10 @@ router.use('/admin', AdminRoutes)
  router.use('/jewellery',JewelleryRoutes);
  router.use('/auction', AuctionRoutes);
  router.use('/cart', CartRoutes )
- router.use('/order', OrderRoutes);
+ router.use('/order', OrderRoutes )
+ router.use('/bid', BidRoutes )
+router.use('/pay', PaymentRoutes)
+
+
 
 module.exports = router;
