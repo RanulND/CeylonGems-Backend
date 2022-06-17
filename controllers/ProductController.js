@@ -232,7 +232,15 @@ exports.getGemProduct = function (req, res) {
     }
   });
 }
-
+exports.getJewelryProduct = function (req, res) {
+  Jewellery.findById(req.params.id).then(product => {
+    if (product) {
+      res.json(product)
+    } else {
+      return errorResponse(res, 404, res.err, null)
+    }
+  });
+}
 exports.getJewelryProduct = function (req, res) {
   Jewellery.findById(req.params.id).then(product => {
     if (product) {
