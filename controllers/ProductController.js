@@ -305,3 +305,29 @@ exports.getAllJewelry = async (req, res) =>  {
     return errorResponse(res, null, "Something went wrong", err);
   }
 }
+
+exports.getSellerGemsProfile = function (req, res) {
+  const seller_id = req.body.seller_id;
+  Gem.find({seller_id: seller_id}).then(gems => {
+   successResponse(res,null,gems)
+  }).catch((err) => {
+    console.log(err)
+  });
+}
+// exports.getSellerGemsProfile = function (req, res) {
+//   const email_id = req.body.id;
+//   Gem.find({ _id: email_id }).then(gem => {
+//     if (gem) {
+//       return res.json(gem)
+//     }
+//   })
+// }
+
+exports.getSellerJewelleriesProfile = function (req, res) {
+  const seller_id = req.body.seller;
+  Gem.find({seller: seller_id}).then((jewellery) => {
+    res.json(jewellery)
+  }).catch((err) => {
+    console.log(err)
+  });
+}
