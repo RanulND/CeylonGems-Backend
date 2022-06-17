@@ -8,9 +8,9 @@ const GemRoutes = require('./gemRoutes');
 const JewelleryRoutes = require('./jewelleryRoutes');
 const AuctionRoutes=require('./AuctionRoutes')
 const CartRoutes = require('./cartRoutes');
-const OrderRoutes = require('./orderRoutes')
-const BidRoutes = require('./bidRoutes')
-const PaymentRoutes = require('./paymentRoutes')
+const OrderRoutes = require('./OrderRoutes');
+const BidRoutes = require('./bidRoutes');
+const PaymentRoutes = require('./paymentRoutes');
 
 router.use('/auth', AuthRoutes);
 router.use('/admin', AdminRoutes); 
