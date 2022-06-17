@@ -22,6 +22,6 @@ router.get('/home-gems1',productController.getThreeAuctionGems);
 router.get('/home-gems2',productController.getThreeDirectGems);
 router.get('/home-gems3',productController.getThreeJewellery);
 router.get('/seller-products/:seller_id',productController.getSellerGems)
+router.post('/sellergems', productController.getSellerGemsProfile);
 router.get('/:id', productController.getGemProduct);
-
 module.exports = router;
