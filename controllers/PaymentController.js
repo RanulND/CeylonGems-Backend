@@ -2,6 +2,9 @@ const Payment = require("../models/payment");
 const { ackResponse, errorResponse, successResponse } = require("../shared/responses");
 const Gem = require('../models/gem')
 const Jewellery = require('../models/jewellery')
+const bcrypt = require("bcrypt")
+const sendEmail = require("../shared/sendEmail");
+const crypto = require("crypto");
 
 const orderController = require('../controllers/OrderController');
 
@@ -9,51 +12,73 @@ const orderController = require('../controllers/OrderController');
 const stripe = require("stripe")('sk_test_51L9jjXSFjlJf2mnzONzkZPXYeWBlL87WTc5XqU0avbxQiYYoqPvYu7895mHhvtlaiAbQ8XwCMLpGPzFHwe6wg7OG00pBgUMWVv');
 
 const storeItems = new Map([
-  [1, { priceInCents: 10000, name: "Blue sapphires" }],
-  [2, { priceInCents: 20000, name: "Synthetic Emerald" }],
+  [1, { price: 10000, name: "Blue sapphires" }],
+  [2, { price: 20000, name: "Synthetic Emerald" }],
 ])
- // const {storeItem} = storeItems(item.product);
-        // console.log("hi")
-        // console.log(storeItem)
-        // console.log(storeItem)
-// function setItems (name1,price1)  {
-// const name=name1;
-// const price=price1;
-//   return {name,price}
+
+// const test = async (id) => {
+//   try{
+//     const details=Gem.findById(id);
+//     if (details) {
+//       console.log(details);
+//       let name="gem"
+//       let price=10000
+//         return({name,price})
+//      } else {
+//      const details= Jewellery.findById(id)
+//          if (details) {
+//            console.log(details);
+//          }
+//          else {
+//            return ({
+//              message: "Product not found !",
+//            });
+//          }
+      
+//      }
+//   }catch(err){
+//     return ({
+//       message: "Error in finding the Product data " + err,
+//     });
+//   }
 // }
 
-// function storeItems (id)  {
-//     Gem.findById(id).then((details) => {
-//       if (details) {
-//         console.log("bye")
-//         console.log(details)
-//         let name=details.title;
-//         let price=details.base_value;
-//         setItems(name,price);
-//       } else {
-//         Jewellery.findById(id).then((details) => {
-//           if (details) {
-//             console.log(details)
-//             let name=details.title;
-//               let price=details.price;
-//               setItems(name,price);
-//           }
-//           else {
-//             return ({
-//               message: "Product not found !",
-//             })
-//           }
-//         })
-//       }
+// function storeItems1  (id) {
+//  const data=test(id);
+//  console.log(data)
+// return data;
+// }
+
+ 
+
+  // function storeItems  (id) {
+  //   Gem.findById(id).then((details) => {
+  //     if (details) {
+  //      console.log(details);
+  //      let name="gem"
+  //      let price=10000
+  //        return({name,price})
+  //     } else {
+  //       Jewellery.findById(id).then((details) => {
+  //         if (details) {
+  //           console.log(details);
+  //         }
+  //         else {
+  //           return ({
+  //             message: "Product not found !",
+  //           });
+  //         }
+  //       })
+  //     }
+  //   }).catch((err) => {
+  //       return ({
+  //         message: "Error in finding the Product data " + err,
+  //       });
+  //     });
+  // };
+  
+        
      
-//     }).catch((err) => {
-//         return ({
-//           message: "Error in finding the Product data " + err,
-//         });
-//       });
-//     // const res = orderController.getProductDetails
-//     // console.log(res)
-//   }
 
 exports.payment =  async (req, res, next) => {
   try {
@@ -62,20 +87,21 @@ exports.payment =  async (req, res, next) => {
       mode: "payment",
       line_items: req.body.items.map(item => {
         const storeItem = storeItems.get(item.id)
+        console.log(storeItem)
         return {
           price_data: {
-            currency: "usd",
+            currency: "LKR",
             product_data: {
               name: storeItem.name,
             },
-            unit_amount: storeItem.priceInCents,
+            unit_amount: storeItem.price,
           },
           quantity: item.quantity,
         }
       }),
       
-      success_url: "http://localhost:3000/paymentreceipt",
-      cancel_url: "http://localhost:3000/payment"
+      success_url: "http://localhost:3000/payment",
+      cancel_url: "http://localhost:3000/paymenterror"
     })
     res.json({ url: session.url })
   } catch (e) {
@@ -83,13 +109,57 @@ exports.payment =  async (req, res, next) => {
   }
 };
 
+//send Payment Verification Email
+exports.paymentEmail =  async (req, res, next) => {
+  var email = req.body.email;
+  var id = req.body.orderId;
+  var amount = req.body.amount;
+  try {
+    
 
-exports.paymentget =  async (req, res, next) => {
- console.log("GET Response from Researcher")
- res.json({ 
-   message: 'It Works'
-  })
+    //set values in payment model
+    const payment = new Payment({
+      orderId: id,
+      amount: amount,
+      isSuccess: true,
+    
+    });
+    await payment.save();
+
+    // Create verification url to email for provided email
+    const paymentVerifyEmailUrl = `http://localhost:3000/paymentreceipt/${id}`;
+
+    // HTML Message
+    const message = `
+        <h1>Payment Success</h1>
+        <p>To verify your payment, please use the payment verification link below to get the payment receipt:</p>
+        <a href=${paymentVerifyEmailUrl} clicktracking=off>${paymentVerifyEmailUrl}</a>`;
+
+    try {
+      await sendEmail({
+        to: email,
+        subject: "CeylonRuby - Payment Verification",
+        text: message,
+      });
+
+      return successResponse(res,
+        "Payment Verification Email Sent.Thank you for the payment. Please check your email to get the payment Receipt",
+        null);
+
+    } catch (err) {
+      console.log(err);
+
+
+      await Payment.save();
+      return errorResponse(res, 400, "Payment Verification Email could not be sent", null);
+    }
+  } catch (err) {
+    return errorResponse(res, 400, "Something went wrong", null);
+  }
 };
+
+
+
 
 // exports.paymentAdd = function (req, res) {
 

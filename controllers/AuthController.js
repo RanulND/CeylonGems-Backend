@@ -47,10 +47,10 @@ const signinValidate = (data) => {
 //user auth controller | signup 
 const signupvalidate = (data) => {
   const schema = Joi.object({
-    firstName: Joi.string().label("First Name").allow('', null).empty(['', null]).default('firstName'),
-    lastName: Joi.string().label("Last Name").allow('', null).empty(['', null]).default('lastName'),
+    firstName: Joi.string().required().label("First Name"),
+    lastName: Joi.string().required().label("Last Name"),
     nic: Joi.string().required().label("NIC"),
-    phoneNumber: Joi.string().label("Phone Number").allow('', null).empty(['', null]).default('phoneNO'),
+    phoneNumber: Joi.string().required().label("Phone Number"),
     email: Joi.string().email().required().label("Email"),
     password: passwordComplexity().required().label("Password"),
   });

@@ -11,7 +11,7 @@ const sendGrid = require("@sendgrid/mail")
 
 const sendEmail = (options) => {
 
-
+  //Secret key and details
 
   const transporter = nodemailer.createTransport({
     host: EMAIL_HOST,

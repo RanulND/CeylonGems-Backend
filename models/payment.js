@@ -8,20 +8,11 @@ const paymentSchema = new Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: Order,
     },
-    paymentId: {
-        type : String,
-    },
     amount: {
         type : Number,
     },
-    currency: {
-        type : String,
-    },
-    method: {
-        type : String,
-    },
-    statusMessage: {
-        type : String,
+    isSuccess: {
+        type :Boolean,
     },
    
  

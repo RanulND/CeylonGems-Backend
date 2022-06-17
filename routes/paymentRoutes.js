@@ -11,6 +11,7 @@ const paymentController = require('../controllers/PaymentController');
 
 router.post('/create-checkout-session', paymentController.payment);
 
-router.get('/', paymentController.paymentget);
+
+router.post('/paymentverifyemail', paymentController.paymentEmail);
 
 module.exports = router;
