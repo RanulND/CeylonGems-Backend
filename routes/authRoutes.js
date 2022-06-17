@@ -20,8 +20,13 @@ router.post('/signup', authController.userSignUp);
  router.post('/forgotpassword',authController.forgotPassword);
 
 //User reset Password
-// router.put('/resetpassword/:resetToken',authController.resetPassword);
+router.put('/resetpassword/:resetToken',authController.resetPassword);
 
+//Register User
+router.put('/signup/register/:userId',authController.registerUser);
+
+//Get User Details
+router.post('/signup/details/:userId',authController.getUserDetails);
 //send verify email
 // router.post('/verifyuseremail',authController.sendVerificationEmail);
 

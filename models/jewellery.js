@@ -35,7 +35,7 @@ const jewellerySchema = new Schema({
     seller: {
         type: mongoose.Schema.Types.ObjectId,
         ref: User,
-        required: true
+        // required: true
     }
 });
 const Jewellery = mongoose.model('Jewellery', jewellerySchema, 'jewellery');
