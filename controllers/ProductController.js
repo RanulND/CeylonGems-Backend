@@ -62,6 +62,7 @@ exports.gemType = function (req, res) {
   });
 };
 
+
 exports.getGemType = async(_, res) => {
     try {
         const docs = await GemType.find({});

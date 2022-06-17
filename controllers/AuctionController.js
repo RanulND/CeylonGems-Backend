@@ -30,8 +30,8 @@ exports.getAllAuctions = function (req, res) {
 
 
 exports.getAuctionDetails = function (req, res) {
-  const email_id = req.body.id;
-  Auction.find({ email: email_id }).then(auction => {
+  const id = req.body.id;
+  Auction.find({ _id: id }).then(auction => {
     if (auction) {
       return res.json(auction)
     }
