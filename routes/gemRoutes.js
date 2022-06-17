@@ -10,10 +10,11 @@ const productController = require('../controllers/ProductController');
 router.post('/add', productController.gemAdd);
 //Get gem type
 router.post('/type', productController.gemType);
+router.get('/get/gem-type', productController.getGemType);
 // Edit gem details
-router.put('/edit',productController.updateGem);
+router.put('/edit/:detailId', productController.updateGem);
 //Get product details
-router.post('/details/:detailId',productController.getProductDetails);
+router.get('/details/:detailId', productController.getProductDetails);
 
 //get all gems
 router.get('/auction',productController.getAllAuctionGems);
