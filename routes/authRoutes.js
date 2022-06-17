@@ -10,6 +10,10 @@ const { protect } = require("../middleware/auth");
 router.post('/admin/signin', authController.adminSignIn);
 
 
+//Register User
+router.put('/signup/register/:userId',authController.registerUser);
+
+
 //User Sign In 
 router.post('/signin', authController.userSignIn);
 

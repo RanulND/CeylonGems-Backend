@@ -6,9 +6,15 @@ const auctionController = require('../controllers/AuctionController');
 // Auction add
 router.post('/add', auctionController.auctionAdd);
 
-//get all gems
-router.get('/',auctionController.getAllAuctions);
+// Edit auction details
+router.put('/edit',auctionController.updateAuction);
+
+//get all Auctions
+router.get('/getAllAuction',auctionController.getAllAuctions);
 
 router.post('/getauction', auctionController.getAuctionDetails);
+
+//get all bids
+// router.get('/Get',auctionController.getAllBids);
 
 module.exports = router;

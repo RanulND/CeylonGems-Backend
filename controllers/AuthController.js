@@ -393,6 +393,8 @@ exports.resetPassword = async (req, res, next) => {
   } catch (err) {
     next(err);
   }
+
+
 };
 
 // Get register user details
@@ -429,7 +431,6 @@ exports.registerUser = async (req, res) => {
       });
   }
 };
-
 //Get user details
 exports.getUserDetails = function (req, res) {
   User.findById(req.params.userId)
@@ -448,4 +449,3 @@ exports.getUserDetails = function (req, res) {
       });
     });
 };
-
