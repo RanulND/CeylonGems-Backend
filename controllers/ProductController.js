@@ -254,10 +254,16 @@ exports.getSellerGems = function (req, res) {
   });
 }
 
-exports.getAllJewelry = function (req, res) {
-  Jewellery.find({ status: true }).then((jewelry) => {
-    res.json(jewelry)
-  }).catch((err) => {
-    console.log(err)
-  })
+exports.getAllJewelry = async (req, res) =>  {
+  try{
+  const jewelry = await Jewellery.find({ status: true })
+  if (jewelry){
+    return successResponse(res, "Got data successfully", jewelry);
+  }
+  else{
+    return errorResponse(res, null, "Data not found", null);
+  }
+  } catch(err){
+    return errorResponse(res, null, "Something went wrong", err);
+  }
 }

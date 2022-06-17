@@ -47,6 +47,100 @@ exports.addItemToCart = async (req, res) => {
     } catch (err) {
         return errorResponse(res, null, "Something wrong", err);
     }
+}
 
+exports.removeItemFromCart = async ( req,res ) => {
+    try{
+        const user = await Cart.findOne({ user: req.body.user })
+        console.log(user);
+        if(user){
+            const product = req.body.product;
+            const item = await user.cartItems.find(c => c.product == product);
+            if(item){
+                    const del = await Cart.findOneAndUpdate({user: req.body.user, "cartItems.product": product },{
+                        $pull: {
+                            "cartItems":{
+                                product: req.body.product
+                            }
+                        }
+                    });
+                    if(del){
+                        return successResponse(res, "Removed the item successfully", null);
+                    }
+            }else {
+                return errorResponse(res, null, "item not found");
+            }
+        }
+    } catch (err){
+        return errorResponse(res, null, "Something wrong", err);
+    }
+}
 
+exports.increaseCart = async (req,res) => {
+    const product = req.body.product;
+    try{
+        const user = await Cart.findOne({user: req.body.user})
+        if(user){
+            const item = await user.cartItems.find(c => c.product == product);
+            const updte = await Cart.findOneAndUpdate({user: req.body.user, "cartItems.product": product },{
+                $set: {
+                    "cartItems.$.quantity": item.quantity + 1     
+                }
+            });
+            console.log(updte);
+            if(updte){
+                return successResponse(res, "increase the item by 1 successfully", null);
+            }else{
+                return errorResponse(res, null, "Something wrong");
+            }
+        }
+    } catch(err){
+        return errorResponse(res, null, "Something went wrong", err);
+    }
+}
+exports.decreaseCart = async (req,res) => {
+    const product = req.body.product;
+    try{
+        const user = await Cart.findOne({user: req.body.user})
+        if(user){
+            const item = await user.cartItems.find(c => c.product == product);
+            const updte = await Cart.findOneAndUpdate({user: req.body.user, "cartItems.product": product },{
+                $set: {
+                    "cartItems.$.quantity": item.quantity - 1     
+                }
+            });
+            console.log(updte);
+            if(updte){
+                return successResponse(res, "decrease the item by 1 successfully", null);
+            }else{
+                return errorResponse(res, null, "Something wrong");
+            }
+        }
+    } catch(err){
+        return errorResponse(res, null, "Something went wrong", err);
+    }
+}
+
+exports.removeItem = async (req,res) => {
+    const product = req.body.product;
+    try{
+        const user = await Cart.findOne({user: req.body.user})
+        if(user){
+            const updte = await Cart.findOneAndUpdate({user: req.body.user, "cartItems.product": product },{
+                $pull: {
+                    "cartItems":{
+                        product: req.body.product
+                    }
+                }
+            });
+            console.log(updte);
+            if(updte){
+                return successResponse(res, "Removed the item by 1 successfully", null);
+            }else{
+                return errorResponse(res, null, "Something wrong");
+            }
+        }
+    } catch(err){
+        return errorResponse(res, null, "Something went wrong", err);
+    }
 }
