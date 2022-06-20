@@ -3,6 +3,7 @@ const Schema = mongoose.Schema
 const User = require('./user')
 const Gem = require('./gem')
 const Jewelry = require('./jewellery')
+const Payment = require('./payment')
 
 const shippingAddressSchema = new Schema({
     city: {
@@ -55,6 +56,29 @@ const orderSchema = new mongoose.Schema({
     },
 
     shippingAddress: shippingAddressSchema,
+    orderStatus : {
+        type : Boolean,
+        required: true,
+        default: false
+    },
+    buyerPaymentStatus : {
+        type: Boolean,
+        required : true
+    },
+    deliveredStatus : {
+        type : Boolean,
+        required : true,
+        default: false
+    },
+    sellerPaymentStatus : {
+        type: Boolean,
+        required: true,
+        default: false
+    },
+    paymentID : {
+        type: mongoose.Schema.Types.ObjectId,
+        ref : Payment
+    }
 
 }, { timestamps: true });
 
