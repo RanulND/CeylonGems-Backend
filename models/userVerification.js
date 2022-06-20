@@ -20,6 +20,13 @@ const userVerificationSchema = new Schema({
     },
     verifyEmailExpire: {
         type : Date,
+    },
+    otp : {
+        type : String,
+       
+    },
+    otpExpire: {
+        type : Date,
     }
 });
 

@@ -7,14 +7,15 @@ const sendEmail = require("../shared/sendEmail");
 const crypto = require("crypto");
 
 const orderController = require('../controllers/OrderController');
+const { getEnvironmentData } = require("worker_threads");
 
 // This is your test secret API key.
 const stripe = require("stripe")('sk_test_51L9jjXSFjlJf2mnzONzkZPXYeWBlL87WTc5XqU0avbxQiYYoqPvYu7895mHhvtlaiAbQ8XwCMLpGPzFHwe6wg7OG00pBgUMWVv');
 
-const storeItems = new Map([
-  [1, { price: 10000, name: "Blue sapphires" }],
-  [2, { price: 20000, name: "Synthetic Emerald" }],
-])
+// const storeItems = new Map([
+//   [1, { price: 10000, name: "Blue sapphires" }],
+//   [2, { price: 20000, name: "Synthetic Emerald" }],
+// ])
 
 // const test = async (id) => {
 //   try{
@@ -51,53 +52,133 @@ const storeItems = new Map([
 
  
 
-  // function storeItems  (id) {
-  //   Gem.findById(id).then((details) => {
-  //     if (details) {
-  //      console.log(details);
-  //      let name="gem"
-  //      let price=10000
-  //        return({name,price})
-  //     } else {
-  //       Jewellery.findById(id).then((details) => {
-  //         if (details) {
-  //           console.log(details);
-  //         }
-  //         else {
-  //           return ({
-  //             message: "Product not found !",
-  //           });
-  //         }
-  //       })
-  //     }
-  //   }).catch((err) => {
-  //       return ({
-  //         message: "Error in finding the Product data " + err,
-  //       });
-  //     });
-  // };
+const storeItems = async(id, next) => {
+   let name;
+   let price;
+    try{
+    const details = await Gem.findById(id);
+      if (details) {
+       console.log(details);
+       name=details.title;
+       price=10000
+      } else {
+        Jewellery.findById(id).then((details) => {
+          if (details) {
+            console.log(details);
+          }
+          else {
+            return ({
+              message: "Product not found !",
+            });
+          }
+        })
+      }
+   
+  } catch{(err) => {
+        return ({
+          message: "Error in finding the Product data " + err,
+        });
+      }};
+      return ({name,price})
+  };
   
+  // function getData(orderId){
+  //  const id = orderId;
+  //  console.log("0"+ id);
+ 
+  //   const getItems = async(id, next) => {
+  //     console.log("Hi: "+ id);
+  //     await storeItems(id).then((data) => {
+  //     console.log("1"+ data);
+  //     return data;
+  //     }).catch((err) => {
+  //       console.log(err)
+  //     })
+  //   }
+  //   getItems(id);
+  // }
         
      
 
+// exports.payment =  async (req, res, next) => {
+  
+//   try {
+//     const session = await stripe.checkout.sessions.create({
+//       payment_method_types: ["card"],
+//       mode: "payment",
+//       line_items: req.body.items.map(item => {
+       
+//     const storeItem = getData(item.product);
+//     console.log("2"+ storeItem);
+//       // storeItems(item.product).then(data => {
+//       //     console.log(data);
+//       //     price = data;
+//       //     console.log(data.name, data.price);
+//       //     getData(data.name, data.price);
+//       // }).catch(err => {
+//       //     console.log(err);
+//       // });
+      
+      
+//         return {
+//           price_data: {
+//             currency: "LKR",
+//             product_data: {
+//               name: storeItem.name,
+//             },
+//             unit_amount: storeItem.price * 100,
+//           },
+//           quantity: item.quantity,
+//         }
+//       }),
+      
+//       success_url: "http://localhost:3000/payment",
+//       cancel_url: "http://localhost:3000/paymenterror"
+//     })
+//     res.json({ url: session.url })
+//   } catch (e) {
+//     res.status(500).json({ error: e.message })
+//   }
+// };
+
+
+
+
+
 exports.payment =  async (req, res, next) => {
+  
   try {
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
       mode: "payment",
       line_items: req.body.items.map(item => {
-        const storeItem = storeItems.get(item.id)
-        console.log(storeItem)
-        return {
-          price_data: {
-            currency: "LKR",
-            product_data: {
-              name: storeItem.name,
-            },
-            unit_amount: storeItem.price,
-          },
-          quantity: item.quantity,
+       
+  
+        const getItems = async(id, next) => {
+          console.log("Hi: "+ id);
+          await storeItems(id).then((data) => {
+          console.log("1"+ data);
+          return data;
+          }).catch((err) => {
+            console.log(err)
+          })
         }
+        getItems(item.product);
+     
+    
+      return {
+        price_data: {
+          currency: "LKR",
+          product_data: {
+            name: data.name,
+          },
+          unit_amount: data.price * 100,
+        },
+        quantity: item.quantity,
+      }
+      
+      
+        
       }),
       
       success_url: "http://localhost:3000/payment",
@@ -108,6 +189,21 @@ exports.payment =  async (req, res, next) => {
     res.status(500).json({ error: e.message })
   }
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 //send Payment Verification Email
 exports.paymentEmail =  async (req, res, next) => {

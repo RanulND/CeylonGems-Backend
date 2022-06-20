@@ -8,6 +8,7 @@ const crypto = require("crypto");
 const { ackResponse, errorResponse, successResponse } = require("../shared/responses")
 const passwordComplexity = require("joi-password-complexity");
 const Joi = require('joi');
+const { match } = require("assert");
 
 // const validateLoginInput = require("../../validation/login");
 exports.adminSignIn = function (req, res) {
@@ -240,14 +241,18 @@ exports.sendVerificationEmail = async (req, res, next) => {
   try {
     const verifyToken = crypto.randomBytes(20).toString("hex");
     const verifyEmailExpire = Date.now() + 24 * 60 * (60 * 1000); //24hrs
-
+    const otpCode = `${Math.floor(1000 + Math.random() * 9000)}`;
+    const hashedOtp = await bcrypt.hash(otpCode,saltRounds);
     //set values in userVerification model
     const newUserVerification = new UserVerification({
       userId: id,
       // Verify Email Token Gen and add to database hashed (private) version of token
       verifyEmailToken: crypto.createHash("sha256").update(verifyToken).digest("hex"),
       createdAt: Date.now(),
-      verifyEmailExpire: verifyEmailExpire
+      verifyEmailExpire: verifyEmailExpire,
+      otp:hashedOtp,
+      otpExpire: Date.now() + 24 * 60 * (60 * 1000)
+
     });
     await newUserVerification.save();
 
@@ -257,8 +262,11 @@ exports.sendVerificationEmail = async (req, res, next) => {
     // HTML Message
     const message = `
         <h1>Please verify your email address.</h1>
+        <p>Please Enter <b>${otpCode}</b> in the mobile app to verify your email address and complete the sign up</p>
+        <h5>OR</h5>
         <p>To verify this email address belongs to you, please use the verification link below to log in:</p>
         <a href=${verifyEmailUrl} clicktracking=off>${verifyEmailUrl}</a>`;
+        
 
     try {
       await sendEmail({
@@ -276,6 +284,8 @@ exports.sendVerificationEmail = async (req, res, next) => {
 
       UserVerification.verifyEmailToken = undefined;
       UserVerification.verifyEmailExpire = undefined;
+      UserVerification.otp = undefined;
+      UserVerification.otpExpire = undefined;
 
       await UserVerification.save();
       return errorResponse(res, 400, "Verification Email could not be sent", null);
