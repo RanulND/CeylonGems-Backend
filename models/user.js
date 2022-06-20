@@ -47,15 +47,13 @@ const userSchema = new Schema({
     password: {
         type: String,
         required: true,
-    
     },
     verified : {
       type :Boolean,
- 
     },
     roles: rolesSchema
     
-});
+}, { timestamps: true });
 
 userSchema.methods.getSignedJwtToken = function () {
     return jwt.sign({ id: this._id, ...this._doc }, process.env.JWT_SECRET, {

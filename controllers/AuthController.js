@@ -14,22 +14,22 @@ const accessTokenSecret = "youraccesstokensecret";
 exports.adminSignIn = function (req, res) {
   var email = req.body.email;
   var password = req.body.password;
-  var status = false
+  // var status = false
   Admin.findOne({ email: email }).then(admin => {
     if (admin) {
       const cmp = bcrypt.compareSync(password, admin.password);
       if (cmp) {
-        status = true
-        successResponse(res, 'Admin Login successful', status);
+        // status = true
+        return sendToken(admin, 200, res);
       }
       else {
-        status = false
-        errorResponse(res, 200, 'Invalid Password', status);
+        // status = false
+        errorResponse(res, null, 'Invalid Password', null);
       }
 
     } else {
-      status = false
-      errorResponse(res, 200, 'Admin not found', status);
+      // status = false
+      errorResponse(res, null, 'Admin not found', null);
     }
   }).catch(err => {
     errorResponse(res, null, null, err);
@@ -48,10 +48,17 @@ const signinValidate = (data) => {
 //user auth controller | signup 
 const signupvalidate = (data) => {
   const schema = Joi.object({
+<<<<<<< HEAD
+    firstName: Joi.string().label("First Name").allow('', null).empty(['', null]).default(''),
+    lastName: Joi.string().label("Last Name").allow('', null).empty(['', null]).default(''),
+    nic: Joi.string().required().label("NIC"),
+    phoneNumber: Joi.string().label("Phone Number").allow('', null).empty(['', null]).default(''),
+=======
     firstName: Joi.string().required().label("First Name"),
     lastName: Joi.string().required().label("Last Name"),
     nic: Joi.string().required().label("NIC"),
     phoneNumber: Joi.string().required().label("Phone Number"),
+>>>>>>> origin/dev
     email: Joi.string().email().required().label("Email"),
     password: passwordComplexity().required().label("Password"),
   });

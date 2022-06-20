@@ -13,6 +13,7 @@ router.put('/edit',auctionController.updateAuction);
 router.get('/getAllAuction',auctionController.getAllAuctions);
 
 router.post('/getauction', auctionController.getAuctionDetails);
+router.get('/getAuctionsByDate', auctionController.getAuctionsByDate)
 
 //get all bids
 // router.get('/Get',auctionController.getAllBids);

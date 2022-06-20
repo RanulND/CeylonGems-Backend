@@ -1,7 +1,11 @@
 const Order = require('../models/order');
 const { ackResponse, errorResponse, successResponse } = require("../shared/responses");
 const Gem = require('../models/gem')
+<<<<<<< HEAD
+const Jewelry = require('../models/jewellery')
+=======
 const Jewellery = require('../models/jewellery')
+>>>>>>> origin/dev
 const User = require('../models/user')
 
 exports.addOrder = async (req, res) => {
@@ -32,7 +36,10 @@ exports.addOrder = async (req, res) => {
         const addOrder = await newOrder.save();
         if (addOrder) {
             return successResponse(res, "order added successfully", newOrder);
+<<<<<<< HEAD
+=======
           
+>>>>>>> origin/dev
         } else {
             return errorResponse(res, null, "Order didn't able to add");
         }
@@ -60,7 +67,11 @@ exports.getOrder = (req, res) => {
 
 exports.getOrdersByBuyer = (req, res) => {
     const { buyerID } = req.body
+<<<<<<< HEAD
+    Order.find({ user: buyerID }).then(orders => {
+=======
     Order.find({user : buyerID}).then(orders => {
+>>>>>>> origin/dev
         successResponse(res, "Orders fetched by buyer", orders)
     }).catch(err => {
         errorResponse(res, null, null, err)
@@ -68,6 +79,43 @@ exports.getOrdersByBuyer = (req, res) => {
     // populate(user, buyerID).then
 }
 
+<<<<<<< HEAD
+exports.getOrdersByDate = (req, res) => {
+    const weekAgoDate = new Date(Date.now() - 10 * 24 * 60 * 60 * 1000)
+    const aggregatorOpts = [
+        {
+            $match: {
+                'createdAt': { $gte: weekAgoDate, $lt: new Date() }
+            }
+        },
+        {
+            $group: {
+                _id: { $dateToString: { format: '%Y-%m-%d', date: "$createdAt" } },
+                count: { $sum: 1 }
+            }
+        },
+    ]
+
+    Order.aggregate(aggregatorOpts).then(result => {
+        const dateArr = new Array(10)
+            .fill(0)
+            .map((_, i) => new Date(Date.now() - (i) * 24 * 60 * 60 * 1000))
+            .map(e => {
+                const date = e.toISOString().split('T')[0];
+                const obj = result.find(f => f._id === date);
+                if (obj) {
+                    return obj
+                }
+
+                return { _id: date, count: 0 };
+            })
+            
+        return successResponse(res, "Orders retrived by date successfully", dateArr.reverse())
+    }).catch(err => {
+        return errorResponse(res, null, null, err)
+    })
+}
+=======
 exports.getOrderDetails = function (req, res) {
     const id = req.body.id;
     Order.findById({ _id: id }).then(order => {
@@ -106,3 +154,4 @@ exports.getProductDetails = function (req, res) {
   };
   
 
+>>>>>>> origin/dev
