@@ -10,9 +10,11 @@ router.post('/add', productController.jewelleryAdd);
 // Edit gem details
 router.put('/edit/:detailId',productController.updateJewellery);
 
-router.get('/all-jewellery',productController.getAllJewelry);
+// router.get('/:id', productController.getJewelryProduct);
+router.get('/all-jewellery', productController.getAllJewelry);
 router.post('/get-jewellery', productController.getJewelleryDetails);
- router.post('/sellerjewellery', productController.getSellerJewelleriesProfile);
+router.post('/sellerjewellery', productController.getSellerJewelleriesProfile);
+router.get('/:id', productController.getJewelryProduct);
 
 module.exports = router;
 

@@ -61,6 +61,7 @@ const signupvalidate = (data) => {
 const sendToken = (user, statusCode, res) => {
   const token = user.getSignedJwtToken();
   return res.status(statusCode).json({ sucess: true, token });
+ 
 }
 
 //user auth controller | signin
@@ -75,22 +76,20 @@ exports.userSignIn = function (req, res) {
   User.findOne({ email: email }).then(user => {
 
     if (user) {
-    
-        // const { error} =isNotVerified(email,res);
-        const cmp = bcrypt.compareSync(password, user.password);
-        if (cmp) {
-          return sendToken(user, 200, res);
-        }
-        else {
-         return errorResponse(res, null, 'Invalid Password', null);
-        }
-      
-
+      // const { error} =isNotVerified(email,res);
+      const cmp = bcrypt.compareSync(password, user.password);
+      if (cmp) {
+        console.log(user);
+        return sendToken(user, 200, res);
+      }
+      else {
+        return errorResponse(res, null, 'Invalid Password', null);
+      }
     } else {
-     return errorResponse(res, 404, 'User not found. Please Sign Up', null);
+      return errorResponse(res, 404, 'User not found. Please Sign Up', null);
     }
   }).catch(err => {
-   return errorResponse(res, null, null, err);
+    return errorResponse(res, null, null, err);
   });
 }
 
@@ -296,13 +295,13 @@ exports.forgotPassword = async (req, res, next) => {
     const user = await User.findOne({ email });
 
     if (!user) {
-    return errorResponse(res, 404, "User with given email does not Exist", null);
+      return errorResponse(res, 404, "User with given email does not Exist", null);
 
     }
     if (!user.verified) {
       return errorResponse(res, 404, 'Your account has not been verified. Please check your email to verify your account', null);
-  
-      }
+
+    }
 
     // Reset Token Gen and add to database hashed (private) version of token
     const resetToken = user.getResetPasswordToken();
@@ -336,7 +335,7 @@ exports.forgotPassword = async (req, res, next) => {
 
       await user.save();
       // res.status(200).json({ success: false, data: "Email could not be sent" });
-     return errorResponse(res, 500, "Email could not be sent", null);
+      return errorResponse(res, 500, "Email could not be sent", null);
 
     }
   } catch (err) {
@@ -372,7 +371,7 @@ exports.resetPassword = async (req, res, next) => {
     });
 
     if (!user) {
-     return errorResponse(res, 400, "Invalid Reset Token");
+      return errorResponse(res, 400, "Invalid Reset Token");
     }
 
     //  set new password
