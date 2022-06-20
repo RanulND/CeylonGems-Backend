@@ -10,4 +10,6 @@ router.post('/getuser', userController.getUserDetails)
 router.post('/getUserById', userController.getUserById)
 router.get('/getUsersByDate', userController.getUsersByDate)
 
+router.post('/getuserbyId', userController.getUserById);
+
 module.exports = router;

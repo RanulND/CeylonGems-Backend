@@ -9,7 +9,7 @@ const gemSchema = new Schema({
     seller_id: {
         type: mongoose.Schema.Types.ObjectId,
         ref: User,
-        required: true
+        // required: true
     },
     title: {
         type: String,
@@ -63,6 +63,8 @@ const gemSchema = new Schema({
     product : {
         type : String,
     }
+  
+
 });
 const Gem = mongoose.model('Gem', gemSchema, 'gem');
 module.exports = Gem;

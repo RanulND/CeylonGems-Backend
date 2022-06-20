@@ -1,4 +1,5 @@
 const Cart = require('../models/cart');
+const User = require('../models/user');
 const { ackResponse, errorResponse, successResponse } = require("../shared/responses");
 
 exports.addItemToCart = async (req, res) => {
@@ -142,5 +143,19 @@ exports.removeItem = async (req,res) => {
         }
     } catch(err){
         return errorResponse(res, null, "Something went wrong", err);
+    }
+}
+
+exports.getCart = async (req,res) => {
+    try{
+        const user = await Cart.findOne({user: req.body.user});
+        if(user){
+            console.log(user.cartItems);
+            return successResponse(res, 'Getting user data is successfull',user);
+        } else {
+            return errorResponse(res,null, 'User not found', null);
+        }
+    } catch(err){
+        return errorResponse(res,null, "Something went wrong", err);
     }
 }

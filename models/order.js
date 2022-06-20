@@ -3,7 +3,10 @@ const Schema = mongoose.Schema
 const User = require('./user')
 const Gem = require('./gem')
 const Jewelry = require('./jewellery')
+<<<<<<< HEAD
 const Payment = require('./payment')
+=======
+>>>>>>> origin/dev
 
 const shippingAddressSchema = new Schema({
     city: {

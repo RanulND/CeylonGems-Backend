@@ -8,11 +8,13 @@ const productController = require('../controllers/ProductController');
 //Jewellery add
 router.post('/add', productController.jewelleryAdd);
 // Edit gem details
-router.put('/edit',productController.updateJewellery);
+router.put('/edit/:detailId',productController.updateJewellery);
 
 // router.get('/:id', productController.getJewelryProduct);
-router.get('/all-jewellery',productController.getAllJewelry);
+router.get('/all-jewellery', productController.getAllJewelry);
 router.post('/get-jewellery', productController.getJewelleryDetails);
+router.post('/sellerjewellery', productController.getSellerJewelleriesProfile);
+router.get('/:id', productController.getJewelryProduct);
 
 module.exports = router;
 

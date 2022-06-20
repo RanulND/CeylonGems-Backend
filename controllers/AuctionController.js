@@ -3,14 +3,15 @@ const { ackResponse, errorResponse, successResponse } = require("../shared/respo
 
 exports.auctionAdd = function (req, res) {
 
-  const { sellerId, title, desc, curPrice, duration, itemImage } = req.body;
+  const { sellerId, title, desc, basePrice, startDate, endDate, itemImage } = req.body;
 
   const newAuction = new Auction({
     sellerId,
     title,
     desc,
-    curPrice,
-    duration,
+    basePrice,
+    startDate,
+    endDate,
     itemImage,
   });
   newAuction.save()
@@ -18,9 +19,10 @@ exports.auctionAdd = function (req, res) {
     .catch((err) => console.log(err));
 }
 
-exports.getAllAuctions = function (req, res) {
+exports.getAllAuctions = function (_, res) {
 
-  Auction.find({ status: true }).then((auctions) => {
+  //Auction.find({ status: true }).then((auctions) => {
+    Auction.find({}).then((auctions) => {
     res.json(auctions)
   }).catch((err) => {
     console.log(err)
@@ -29,13 +31,14 @@ exports.getAllAuctions = function (req, res) {
 
 exports.getAuctionDetails = function (req, res) {
   const email_id = req.body.id;
-  Auction.find({ email: email_id }).then(auction => {
+  Auction.find({ _id: email_id }).then(auction => {
     if (auction) {
       return res.json(auction)
     }
   })
 }
 
+<<<<<<< HEAD
 exports.getAuctionsByDate = (req, res) => {
   const weekAgoDate = new Date(Date.now() - 10 * 24 * 60 * 60 * 1000)
   const aggregatorOpts = [
@@ -71,3 +74,40 @@ exports.getAuctionsByDate = (req, res) => {
       return errorResponse(res, null, null, err)
   })
 }
+=======
+exports.updateAuction = async (req, res) => {
+  var nic = req.body.nic;
+
+  User.findOneAndUpdate(
+    { nic: nic },
+    {
+      sellerId: req.body.sellerId,
+      title: req.body.title,
+      desc: req.body.desc,
+      basePrice: req.body.basePrice,
+      startDate: req.body.startDate,
+      endDate: req.body.endDate,
+      itemImage: req.body.itemImage,
+    }
+  )
+    .then((auction) => {
+      if (auction) {
+        res.send(auction);
+      } else {
+        return res.status(404).send({
+          message: "Auction not found !",
+        });
+      }
+    })
+    .catch((err) => {
+      return res.status(500).send({
+        message: "Error in updating the Auction data" + err,
+      });
+    });
+
+};
+
+
+
+
+>>>>>>> origin/dev
