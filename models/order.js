@@ -3,31 +3,23 @@ const Schema = mongoose.Schema
 const User = require('./user')
 const Gem = require('./gem')
 const Jewelry = require('./jewellery')
-<<<<<<< HEAD
 const Payment = require('./payment')
-=======
->>>>>>> origin/dev
 
 const shippingAddressSchema = new Schema({
     city: {
-        type: String,
-        // required: true
+        type: String
     },
     streetAddress: {
-        type: String,
-        // required: true
+        type: String
     },
     province: {
-        type: String,
-        // required: true,
+        type: String
     },
     country: {
-        type: String,
-        // required: true,
+        type: String
     },
     zipCode: {
-        type: String,
-        // required: true
+        type: String
     }
 })
 
