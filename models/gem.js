@@ -65,7 +65,12 @@ const gemSchema = new Schema({
     },
     product: {
         type: String,
+    },
+    verified: {
+        type: Boolean
     }
+  
+
 });
 const Gem = mongoose.model('Gem', gemSchema, 'gem');
 module.exports = Gem;

@@ -29,6 +29,7 @@ exports.gemAdd = function (req, res) {
     base_value,
     auc_duration,
     product,
+    verified
   } = req.body;
 
   const newGem = new Gem({
@@ -48,6 +49,7 @@ exports.gemAdd = function (req, res) {
     base_value,
     auc_duration,
     product,
+    verified
   });
   newGem
     .save()
@@ -96,6 +98,32 @@ exports.getProductDetails = function (req, res) {
     });
 };
 
+//delete product
+exports.deleteGem = async (req, res) => {
+  Gem.findByIdAndDelete(req.params.detailId)
+    .then(() => {
+        res.send("Deleted Successfully!");
+    })
+    .catch((err) => {
+      return res.status(500).send({
+        message: "Error in deleting the product data" + err,
+      });
+    });
+};
+
+//delete product
+exports.deleteJewel = async (req, res) => {
+  Jewellery.findByIdAndDelete(req.params.detailId)
+    .then(() => {
+        res.send("Deleted Successfully!");
+    })
+    .catch((err) => {
+      console.log("tst")
+      return res.status(500).send({
+        message: "Error in deleting the product data" + err,
+      });
+    });
+};
 
 // Update Gem details
 exports.updateGem = async (req, res) => {
@@ -263,7 +291,15 @@ exports.getGemProduct = function (req, res) {
     }
   });
 }
-
+exports.getJewelryProduct = function (req, res) {
+  Jewellery.findById(req.params.id).then(product => {
+    if (product) {
+      res.json(product)
+    } else {
+      return errorResponse(res, 404, res.err, null)
+    }
+  });
+}
 exports.getJewelryProduct = function (req, res) {
   Jewellery.findById(req.params.id).then(product => {
     if (product) {
@@ -296,4 +332,39 @@ exports.getAllJewelry = async (req, res) =>  {
   } catch(err){
     return errorResponse(res, null, "Something went wrong", err);
   }
+}
+
+exports.getSellerGemsProfile = function (req, res) {
+  const seller_id = req.body.seller_id;
+  Gem.find({seller_id: seller_id}).then(gems => {
+   successResponse(res,null,gems)
+  }).catch((err) => {
+    console.log(err)
+  });
+}
+// exports.getSellerGemsProfile = function (req, res) {
+//   const email_id = req.body.id;
+//   Gem.find({ _id: email_id }).then(gem => {
+//     if (gem) {
+//       return res.json(gem)
+//     }
+//   })
+// }
+
+exports.getSellerJewelleriesProfile = function (req, res) {
+  const seller_id = req.body.seller;
+  Gem.find({seller: seller_id}).then((jewellery) => {
+    res.json(jewellery)
+  }).catch((err) => {
+    console.log(err)
+  });
+}
+
+
+exports.getNonVerified = function (req, res) {
+  Gem.find({verified: false}).then((data) => {
+    res.json(data)
+  }).catch((err) => {
+    console.log(err)
+  })
 }
