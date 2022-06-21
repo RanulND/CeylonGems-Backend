@@ -39,6 +39,14 @@ exports.getAuctionDetails = function (req, res) {
     }
   })
 }
+exports.getAuctionCount=function(req, res){
+  const auctionCount= Auction.countDocuments((count) => count)
+     if(!auctionCount) {
+      res.status(500).json({success: false})
+     }
+     res.send({
+      auctionCount : auctionCount})
+}
 
 exports.updateAuction = async (req, res) => {
   var nic = req.body.nic;
@@ -69,6 +77,7 @@ exports.updateAuction = async (req, res) => {
         message: "Error in updating the Auction data" + err,
       });
     });
+   
 
 };
 

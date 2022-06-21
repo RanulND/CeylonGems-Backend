@@ -1,7 +1,7 @@
+const { getMaxListeners } = require("../models/gem");
 const Gem = require("../models/gem");
 const GemType = require("../models/gemType");
 const Jewellery = require("../models/jewellery");
-
 const {
   ackResponse,
   errorResponse,
@@ -307,27 +307,34 @@ exports.getAllJewelry = async (req, res) =>  {
 }
 
 exports.getSellerGemsProfile = function (req, res) {
-  const seller_id = req.body.seller_id;
-  Gem.find({seller_id: seller_id}).then(gems => {
+  Gem.findById(req.params.id).then(gems => {
    successResponse(res,null,gems)
   }).catch((err) => {
     console.log(err)
   });
 }
-// exports.getSellerGemsProfile = function (req, res) {
-//   const email_id = req.body.id;
-//   Gem.find({ _id: email_id }).then(gem => {
-//     if (gem) {
-//       return res.json(gem)
-//     }
-//   })
-// }
 
 exports.getSellerJewelleriesProfile = function (req, res) {
-  const seller_id = req.body.seller;
-  Gem.find({seller: seller_id}).then((jewellery) => {
-    res.json(jewellery)
+  Gem.findById(req.params.id).then(jewellery => {
+    successResponse(res,null,jewellery)
   }).catch((err) => {
     console.log(err)
   });
+}
+exports.getGemCount=function(req, res){
+  const gemCount= Gem.countDocuments((count) => count)
+     if(!gemCount) {
+      res.status(500).json({success: false})
+     }
+     res.send({
+      gemCount : gemCount})
+}
+
+exports.getJwlCount=function(req, res){
+  const jwlCount= Gem.countDocuments((count) => count)
+     if(!jwlCount) {
+      res.status(500).json({success: false})
+     }
+     res.send({
+      jwlCount : jwlCount})
 }

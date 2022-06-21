@@ -14,6 +14,7 @@ router.get('/getAllAuction',auctionController.getAllAuctions);
 
 router.post('/getauction', auctionController.getAuctionDetails);
 
+router.get('get-count/:seller_id',auctionController.getAuctionCount)
 //get all bids
 // router.get('/Get',auctionController.getAllBids);
 
