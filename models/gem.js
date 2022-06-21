@@ -9,7 +9,7 @@ const gemSchema = new Schema({
     seller_id: {
         type: mongoose.Schema.Types.ObjectId,
         ref: User,
-        required: true
+        // required: true
     },
     title: {
         type: String,

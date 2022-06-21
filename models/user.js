@@ -19,25 +19,27 @@ const rolesSchema = new Schema({
 const userSchema = new Schema({
     firstName : { 
         type : String,
-        // required:true
+        required:true
     },
     lastName : {
         type : String,
-        // required:true
+        required:true
     },
     nic : {
         type : String,
         unique:true,
-        // required:true
+        required:true
     },
     phoneNumber : {
         type : String,
-        // required:true
+        required:true
     },
     email : {
         type : String,
         unique:true,
-        required:true
+    },
+    photos: {
+        type: String
     },
     password: {
         type: String,
