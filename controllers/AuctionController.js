@@ -38,7 +38,6 @@ exports.getAuctionDetails = function (req, res) {
   })
 }
 
-<<<<<<< HEAD
 exports.getAuctionsByDate = (req, res) => {
   const weekAgoDate = new Date(Date.now() - 10 * 24 * 60 * 60 * 1000)
   const aggregatorOpts = [
@@ -74,7 +73,6 @@ exports.getAuctionsByDate = (req, res) => {
       return errorResponse(res, null, null, err)
   })
 }
-=======
 exports.updateAuction = async (req, res) => {
   var nic = req.body.nic;
 
@@ -110,4 +108,3 @@ exports.updateAuction = async (req, res) => {
 
 
 
->>>>>>> origin/dev

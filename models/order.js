@@ -36,7 +36,7 @@ const itemList = new Schema({
 
 })
 
-const orderSchema = new mongoose.Schema({
+const orderSchema = new Schema({
     user: {
         type: mongoose.Schema.Types.ObjectId,
         ref: User,
@@ -72,10 +72,9 @@ const orderSchema = new mongoose.Schema({
     },
     paymentID : {
         type: mongoose.Schema.Types.ObjectId,
-        ref : Payment
+        ref : 'Payment'
     }
-
-}, { timestamps: true });
+})
 
 const Order = mongoose.model('Order', orderSchema, 'order');
 module.exports = Order;

@@ -306,7 +306,6 @@ exports.getAllJewelry = async (req, res) =>  {
   }
 }
 
-<<<<<<< HEAD
 exports.gemCountBySeller = function (req, res) {
   const { id } = req.body
   Gem.countDocuments({ seller_id: id }).then(notSoldCount => {
@@ -328,7 +327,6 @@ exports.gemCountBySeller = function (req, res) {
   //     errorResponse(res, null, null, err)
   //   })
 } 
-=======
 exports.getSellerGemsProfile = function (req, res) {
   const seller_id = req.body.seller_id;
   Gem.find({seller_id: seller_id}).then(gems => {
@@ -354,4 +352,3 @@ exports.getSellerJewelleriesProfile = function (req, res) {
     console.log(err)
   });
 }
->>>>>>> origin/dev

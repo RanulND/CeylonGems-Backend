@@ -6,7 +6,7 @@ const paymentSchema = new Schema({
 
     orderId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: Order,
+        ref: 'Order',
     },
     amount: {
         type : Number,
