@@ -5,9 +5,10 @@ const Jewellery = require('../models/jewellery')
 const bcrypt = require("bcrypt")
 const sendEmail = require("../shared/sendEmail");
 const crypto = require("crypto");
-
+// const Stripe = require("stripe");
 const orderController = require('../controllers/OrderController');
 const { getEnvironmentData } = require("worker_threads");
+const Order = require("../models/order");
 
 // This is your test secret API key.
 const stripe = require("stripe")('sk_test_51L9jjXSFjlJf2mnzONzkZPXYeWBlL87WTc5XqU0avbxQiYYoqPvYu7895mHhvtlaiAbQ8XwCMLpGPzFHwe6wg7OG00pBgUMWVv');
@@ -17,38 +18,7 @@ const stripe = require("stripe")('sk_test_51L9jjXSFjlJf2mnzONzkZPXYeWBlL87WTc5Xq
 //   [2, { price: 20000, name: "Synthetic Emerald" }],
 // ])
 
-// const test = async (id) => {
-//   try{
-//     const details=Gem.findById(id);
-//     if (details) {
-//       console.log(details);
-//       let name="gem"
-//       let price=10000
-//         return({name,price})
-//      } else {
-//      const details= Jewellery.findById(id)
-//          if (details) {
-//            console.log(details);
-//          }
-//          else {
-//            return ({
-//              message: "Product not found !",
-//            });
-//          }
-      
-//      }
-//   }catch(err){
-//     return ({
-//       message: "Error in finding the Product data " + err,
-//     });
-//   }
-// }
 
-// function storeItems1  (id) {
-//  const data=test(id);
-//  console.log(data)
-// return data;
-// }
 
  
 
@@ -73,31 +43,13 @@ const storeItems = async(id, next) => {
           }
         })
       }
-   
-  } catch{(err) => {
-        return ({
-          message: "Error in finding the Product data " + err,
-        });
-      }};
-      return ({name,price})
-  };
+    }catch (err){
+        console.log(err)
+    }
+    return({name,price})
+  }
   
-  // function getData(orderId){
-  //  const id = orderId;
-  //  console.log("0"+ id);
- 
-  //   const getItems = async(id, next) => {
-  //     console.log("Hi: "+ id);
-  //     await storeItems(id).then((data) => {
-  //     console.log("1"+ data);
-  //     return data;
-  //     }).catch((err) => {
-  //       console.log(err)
-  //     })
-  //   }
-  //   getItems(id);
-  // }
-        
+  
      
 
 // exports.payment =  async (req, res, next) => {
@@ -144,65 +96,148 @@ const storeItems = async(id, next) => {
 
 
 
+// exports.payment =  async (req, res, next) => {
+  
+//   try {
+//     const session = await stripe.checkout.sessions.create({
+//       payment_method_types: ["card"],
+//       mode: "payment",
+//       line_items:req.body.items.map(async item => {
+        
+       
+//         const storeItem = await storeItems(item.product);
+//         console.log(storeItem);
+//         console.log("Let's see");
+//         console.log(storeItem.name);
+//         console.log(storeItem.price);
+    
+//       return {
+//         price_data: {
+//           currency: "LKR",
+//           product_data: {
+//             name: storeItem.name,
+//           },
+//           unit_amount: storeItem.price * 100,
+//         },
+//         quantity: item.quantity,
+//       } 
+//       }),
+      
+//       success_url: "http://localhost:3000/payment",
+//       cancel_url: "http://localhost:3000/paymenterror"
+//     })
+//     res.json({ url: session.url })
+//   } catch (e) {
+//     res.status(500).json({ error: e.message })
+//   }
+// };
+
+// const productData = async (items,next) => {
+//   let products = [];
+//   items.map(async item => {
+//    const storeItem = await storeItems(item.product)
+//     console.log(storeItem);
+//       console.log("Let's see");
+//       console.log(storeItem.name);
+//       console.log(storeItem.price);
+//       let itemsData = {
+//         id: item.product,
+//         name:storeItem.name,
+//         price:storeItem.price ,
+       
+//        }
+//        console.log("Hehe: " + itemsData)
+//        products.push(itemsData);
+//   })
+//   console.log("Bingo: " + products)
+//   return products;
+// }
+
+
 
 exports.payment =  async (req, res, next) => {
-  
-  try {
-    const session = await stripe.checkout.sessions.create({
-      payment_method_types: ["card"],
-      mode: "payment",
-      line_items: req.body.items.map(item => {
-       
-  
-        const getItems = async(id, next) => {
-          console.log("Hi: "+ id);
-          await storeItems(id).then((data) => {
-          console.log("1"+ data);
-          return data;
-          }).catch((err) => {
-            console.log(err)
-          })
-        }
-        getItems(item.product);
-     
+// const getData = await productData(req.body.items)
+// console.log("Hello: " + getData)
+ const total = req.body.amount;
+ const id = req.body.id;
+ console.log(total,id)
+try {
+  const session = await stripe.checkout.sessions.create({
+    payment_method_types: ["card"],
+    mode: "payment",
+  //   line_items:req.body.items.map(async item => {
     
-      return {
-        price_data: {
-          currency: "LKR",
-          product_data: {
-            name: data.name,
-          },
-          unit_amount: data.price * 100,
-        },
-        quantity: item.quantity,
-      }
-      
-      
-        
-      }),
-      
-      success_url: "http://localhost:3000/payment",
-      cancel_url: "http://localhost:3000/paymenterror"
-    })
-    res.json({ url: session.url })
-  } catch (e) {
-    res.status(500).json({ error: e.message })
-  }
+  //     const storeItem = await storeItems(item.product)
+  //     console.log(storeItem);
+  //       console.log("Let's see");
+  //       console.log(storeItem.name);
+  //       console.log(storeItem.price);
+    
+  //     return {
+  //       price_data: {
+  //         currency: "LKR",
+  //         product_data: {
+  //           name: storeItem.name,
+  //         },
+  //         unit_amount: storeItem.price,
+  //       },
+  //       quantity: item.quantity,
+  //     }
+    
+  // }),
+  line_items: [
+    {
+      price_data: {
+                currency: "LKR",
+                product_data: {
+                            name: "Total",
+                          },
+                unit_amount: total * 100,
+              },
+              quantity:1,
+            
+            
+    },
+  ],
+    success_url: `http://localhost:3000/ceylon-ruby/buyer/payment/${id}`,
+    cancel_url: `http://localhost:3000/ceylon-ruby/buyer/paymenterror/${id}`
+  })
+  res.json({ url: session.url })
+} catch (e) {
+  res.status(500).json({ error: e.message })
+}
+
 };
 
 
 
 
-
-
-
-
-
-
-
-
-
-
+//mobile
+exports.paymentStripe =  async (req, res, next) => {
+  try {
+    // Getting data from client
+    let { amount, name } = req.body;
+    // Simple validation
+    if (!amount || !name)
+      return res.status(400).json({ message: "All fields are required" });
+    amount = parseInt(amount);
+    // Initiate payment
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: Math.round(amount * 100),
+      currency: "LKR",
+      payment_method_types: ["card"],
+      metadata: { name },
+    });
+    // Extracting the client secret 
+    const clientSecret = paymentIntent.client_secret;
+    // Sending the client secret as response
+    res.json({ message: "Payment initiated", clientSecret });
+  } catch (err) {
+    // Catch any error and send error 500 to client
+    console.error(err);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+}
 
 
 //send Payment Verification Email
@@ -223,7 +258,7 @@ exports.paymentEmail =  async (req, res, next) => {
     await payment.save();
 
     // Create verification url to email for provided email
-    const paymentVerifyEmailUrl = `http://localhost:3000/paymentreceipt/${id}`;
+    const paymentVerifyEmailUrl = `http://localhost:3000/ceylon-ruby/buyer/paymentreceipt/${id}`;
 
     // HTML Message
     const message = `
@@ -237,6 +272,18 @@ exports.paymentEmail =  async (req, res, next) => {
         subject: "CeylonRuby - Payment Verification",
         text: message,
       });
+
+      Order.findOneAndUpdate(
+        {_id: id },
+        {
+          BuyerPaymentSuccess:true
+        }
+      ).then(order => {
+        res.send(order)
+      }).catch(err => {
+        errorResponse(res, null, null, err)
+      })
+    
 
       return successResponse(res,
         "Payment Verification Email Sent.Thank you for the payment. Please check your email to get the payment Receipt",
@@ -253,6 +300,43 @@ exports.paymentEmail =  async (req, res, next) => {
     return errorResponse(res, 400, "Something went wrong", null);
   }
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

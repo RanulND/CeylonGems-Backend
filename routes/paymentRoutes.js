@@ -14,4 +14,6 @@ router.post('/create-checkout-session', paymentController.payment);
 
 router.post('/paymentverifyemail', paymentController.paymentEmail);
 
+
+router.post('/payment', paymentController.paymentStripe);
 module.exports = router;

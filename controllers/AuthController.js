@@ -154,14 +154,17 @@ const sendVerificationEmail = async ({ _id, email }, res) => {
   try {
     const verifyToken = crypto.randomBytes(20).toString("hex");
     const verifyEmailExpire = Date.now() + 24 * 60 * (60 * 1000); //24hrs
-
+    const otpCode = `${Math.floor(1000 + Math.random() * 9000)}`;
+    // const hashedOtp = bcrypt.hashSync(otpCode, 10);
     //set values in userVerification model
     const newUserVerification = new UserVerification({
       userId: _id,
       // Verify Email Token Gen and add to database hashed (private) version of token
       verifyEmailToken: crypto.createHash("sha256").update(verifyToken).digest("hex"),
       createdAt: Date.now(),
-      verifyEmailExpire: verifyEmailExpire
+      verifyEmailExpire: verifyEmailExpire,
+      otp: crypto.createHash("sha256").update(otpCode).digest("hex"),
+      otpExpire: Date.now() + 24 * 60 * (60 * 1000)
     });
     await newUserVerification.save();
 
@@ -171,6 +174,8 @@ const sendVerificationEmail = async ({ _id, email }, res) => {
     // HTML Message
     const message = `
         <h1>Please verify your email address.</h1>
+        <p>Please Enter <b>${otpCode}</b> in the mobile app to verify your email address and complete the sign up</p>
+        <h5>OR</h5>
         <p>To verify this email address belongs to you, please use the verification link below to log in:</p>
         <a href=${verifyEmailUrl} clicktracking=off>${verifyEmailUrl}</a>`;
 
@@ -190,6 +195,9 @@ const sendVerificationEmail = async ({ _id, email }, res) => {
 
       UserVerification.verifyEmailToken = undefined;
       UserVerification.verifyEmailExpire = undefined;
+      UserVerification.otp = undefined;
+      UserVerification.otpExpire = undefined;
+
 
       await UserVerification.save();
       return errorResponse(res, 400, "Verification Email could not be sent", null);
@@ -242,7 +250,7 @@ exports.sendVerificationEmail = async (req, res, next) => {
     const verifyToken = crypto.randomBytes(20).toString("hex");
     const verifyEmailExpire = Date.now() + 24 * 60 * (60 * 1000); //24hrs
     const otpCode = `${Math.floor(1000 + Math.random() * 9000)}`;
-    const hashedOtp = await bcrypt.hash(otpCode,saltRounds);
+    // const hashedOtp = bcrypt.hashSync(otpCode, 10);
     //set values in userVerification model
     const newUserVerification = new UserVerification({
       userId: id,
@@ -250,7 +258,7 @@ exports.sendVerificationEmail = async (req, res, next) => {
       verifyEmailToken: crypto.createHash("sha256").update(verifyToken).digest("hex"),
       createdAt: Date.now(),
       verifyEmailExpire: verifyEmailExpire,
-      otp:hashedOtp,
+      otp:crypto.createHash("sha256").update(otpCode).digest("hex"),
       otpExpire: Date.now() + 24 * 60 * (60 * 1000)
 
     });
@@ -291,7 +299,7 @@ exports.sendVerificationEmail = async (req, res, next) => {
       return errorResponse(res, 400, "Verification Email could not be sent", null);
     }
   } catch (err) {
-    return errorResponse(res, 400, "Something went wrong", null);
+    return errorResponse(res, 400, "Something went wrong" + err, null);
   }
 }
 
@@ -314,16 +322,19 @@ exports.forgotPassword = async (req, res, next) => {
       }
 
     // Reset Token Gen and add to database hashed (private) version of token
-    const resetToken = user.getResetPasswordToken();
-
+    const reset = user.getResetPasswordToken();
+    console.log(reset);
+    console.log(reset.resetToken, reset.OTP);
     await user.save();
 
     // Create reset url to email to provided email
-    const resetUrl = `http://localhost:3000/passwordreset/${resetToken}`;
+    const resetUrl = `http://localhost:3000/passwordreset/${reset.resetToken}`;
 
     // HTML Message
     const message = `
         <h1>You have requested a password reset</h1>
+        <p>Please enter this OTP: ${reset.OTP} in your mobile app to reset your password</p>
+        <h5>OR</h5>
         <p>Please make a put request to the following link:</p>
         <a href=${resetUrl} clicktracking=off>${resetUrl}</a>
       `;
@@ -342,6 +353,7 @@ exports.forgotPassword = async (req, res, next) => {
 
       user.resetPasswordToken = undefined;
       user.resetPasswordExpire = undefined;
+      user.resetPasswordOTP = undefined;
 
       await user.save();
       // res.status(200).json({ success: false, data: "Email could not be sent" });
@@ -404,3 +416,105 @@ exports.resetPassword = async (req, res, next) => {
   }
 };
 
+exports.resetPasswordOTP = async (req, res, next) => {
+  console.log(req);
+
+  const otp = req.body.otp;
+
+  if(!otp){
+    return errorResponse(res, 400, "Empty OTP details are not allowed");
+  }
+
+  const resetPasswordOTP = crypto
+  .createHash("sha256")
+  .update(otp)
+  .digest("hex");
+  try {
+    const user = await User.findOne({
+      resetPasswordOTP,
+      resetPasswordExpire: { $gt: Date.now() },
+    });
+
+    if (!user) {
+     return errorResponse(res, 400, "Invalid Reset OTP token");
+    }
+
+    return res.json(user)
+   
+  } catch (err) {
+    next(err);
+  }
+}
+
+exports.updatePassword= async (req, res, next) => {
+  console.log(req);
+
+  const userId = req.body.id;
+  const password = req.body.password;
+  
+
+        try{
+          console.log(password);
+          const user = await User.findById(userId);
+          console.log(user);
+          //  set new password
+          user.password = password;
+          // const { error } = resetPasswordvalidate(password);
+
+          // if (error) {
+          //   return errorResponse(res, 404, error.details[0].message, null);
+          // }
+
+          // Hash password before saving in database
+          user.password = bcrypt.hashSync(password, 10);
+          user.resetPasswordOTP = undefined;
+          user.resetPasswordExpire = undefined;
+
+          await user.save();
+          return successResponse(res, "Password Updated Successfully", null);
+        }catch (err) {
+          next(err);
+        }
+}
+
+exports.verifyEmailOTP = async (req, res, next) => {
+
+  console.log(req.body.otp);
+
+  const OTP = req.body.otp;
+
+  if(!OTP){
+    return errorResponse(res, 400, "Empty OTP details are not allowed");
+  }
+
+  const otp = crypto
+  .createHash("sha256")
+  .update(OTP)
+  .digest("hex");
+  console.log(otp);
+
+  try {
+    const userVerification = await UserVerification.findOne({
+      otp,
+      otpExpire: { $gt: Date.now() },
+    });
+
+    if (!userVerification) {
+      errorResponse(res, 400, "Invalid Email Verification OTP");
+
+    }
+
+    userVerification.otp = undefined;
+    userVerification.otpExpire = undefined;
+    await userVerification.save();
+    let userId = userVerification.userId;
+    User.findOne({ _id: userId }).then(user => {
+      user.verified = true;
+      user.save();
+      successResponse(res, 'User Verified', user);
+    }).catch(err => console.log(err));
+
+  } catch (err) {
+    return (err);
+  }
+}

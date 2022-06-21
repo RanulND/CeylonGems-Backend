@@ -4,6 +4,7 @@ const Gem = require('../models/gem')
 const Jewellery = require('../models/jewellery')
 const User = require('../models/user')
 
+
 exports.addOrder = async (req, res) => {
     const { buyer, itemList, country, streetAddress, city, province, zipCode, orderValue } = req.body;
 
@@ -79,6 +80,18 @@ exports.getOrderDetails = function (req, res) {
         return errorResponse(res, 400, "Something went wrong.", null);
       });
 }
+
+//delete an order
+exports.deleteOrder = function (req, res) {
+const id = req.body.id;
+    Order.findByIdAndDelete(req.body.id).then(() => {
+      res.send("Order deleted Successfully");
+
+      }).catch(err =>{
+        return errorResponse(res, 400, "Something went wrong.", null);
+      });
+}
+
 
 //Get product details
 exports.getProductDetails = function (req, res) {

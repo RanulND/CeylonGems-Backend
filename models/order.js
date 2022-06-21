@@ -53,6 +53,10 @@ const orderSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
+    BuyerPaymentSuccess: {
+        type: Boolean,
+        default: false
+    },
 
     shippingAddress: shippingAddressSchema,
 

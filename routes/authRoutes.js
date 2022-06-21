@@ -28,4 +28,13 @@ router.post('/signup', authController.userSignUp);
 //User Email Verification
 router.post('/verifyuseremail/:verifyToken',authController.emailVerification);
 
+//User Email Verification OTP
+router.post('/verifyuseremailOTP',authController.verifyEmailOTP);
+
+//User reset Password OTP
+router.post('/resetpasswordOTP',authController.resetPasswordOTP);
+
+//User Password update OTP
+router.post('/updatepassword',authController.updatePassword);
+
 module.exports = router;
