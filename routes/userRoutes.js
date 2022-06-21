@@ -11,5 +11,6 @@ router.post('/getUserById', userController.getUserById)
 router.get('/getUsersByDate', userController.getUsersByDate)
 
 router.post('/getuserbyId', userController.getUserById);
+router.get('/deactivatedBuyerCount', userController.deactivatedBuyerCount)
 
 module.exports = router;

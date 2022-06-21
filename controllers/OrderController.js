@@ -69,7 +69,7 @@ exports.getOrdersByBuyer = (req, res) => {
 }
 
 exports.getOrdersByDate = (req, res) => {
-    const weekAgoDate = new Date(Date.now() - 10 * 24 * 60 * 60 * 1000)
+    const weekAgoDate = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
     const aggregatorOpts = [
         {
             $match: {

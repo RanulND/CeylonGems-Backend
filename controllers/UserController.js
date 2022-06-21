@@ -22,7 +22,7 @@ exports.getUserById = (req, res) => {
 }   
 
 exports.getUsersByDate = (req, res) => {
-    const weekAgoDate = new Date(Date.now() - 10 * 24 * 60 * 60 * 1000)
+    const weekAgoDate = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
     const aggregatorOpts = [
         {
             $match: {
@@ -54,5 +54,13 @@ exports.getUsersByDate = (req, res) => {
         return successResponse(res, "Orders retrived by date successfully", dateArr.reverse())
     }).catch(err => {
         return errorResponse(res, null, null, err)
+    })
+}
+
+exports.deactivatedBuyerCount = (req, res) => {
+    User.find({ 'roles.buyer' : false}).count().then((count) => {
+        successResponse(res, "Deactivated user count retrieved successfully", count)
+    }).catch(err => {
+        errorResponse(res, null, null, err)
     })
 }
