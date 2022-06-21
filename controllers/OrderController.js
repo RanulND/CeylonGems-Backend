@@ -1,11 +1,7 @@
 const Order = require('../models/order');
 const { ackResponse, errorResponse, successResponse } = require("../shared/responses");
 const Gem = require('../models/gem')
-<<<<<<< HEAD
-const Jewelry = require('../models/jewellery')
-=======
 const Jewellery = require('../models/jewellery')
->>>>>>> origin/dev
 const User = require('../models/user')
 
 exports.addOrder = async (req, res) => {
@@ -36,10 +32,7 @@ exports.addOrder = async (req, res) => {
         const addOrder = await newOrder.save();
         if (addOrder) {
             return successResponse(res, "order added successfully", newOrder);
-<<<<<<< HEAD
-=======
           
->>>>>>> origin/dev
         } else {
             return errorResponse(res, null, "Order didn't able to add");
         }
@@ -67,11 +60,7 @@ exports.getOrder = (req, res) => {
 
 exports.getOrdersByBuyer = (req, res) => {
     const { buyerID } = req.body
-<<<<<<< HEAD
     Order.find({ user: buyerID }).then(orders => {
-=======
-    Order.find({user : buyerID}).then(orders => {
->>>>>>> origin/dev
         successResponse(res, "Orders fetched by buyer", orders)
     }).catch(err => {
         errorResponse(res, null, null, err)
@@ -79,7 +68,6 @@ exports.getOrdersByBuyer = (req, res) => {
     // populate(user, buyerID).then
 }
 
-<<<<<<< HEAD
 exports.getOrdersByDate = (req, res) => {
     const weekAgoDate = new Date(Date.now() - 10 * 24 * 60 * 60 * 1000)
     const aggregatorOpts = [
@@ -115,7 +103,6 @@ exports.getOrdersByDate = (req, res) => {
         return errorResponse(res, null, null, err)
     })
 }
-=======
 exports.getOrderDetails = function (req, res) {
     const id = req.body.id;
     Order.findById({ _id: id }).then(order => {
@@ -154,4 +141,3 @@ exports.getProductDetails = function (req, res) {
   };
   
 
->>>>>>> origin/dev
