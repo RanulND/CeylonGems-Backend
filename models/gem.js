@@ -60,12 +60,11 @@ const gemSchema = new Schema({
     base_value: {
         type: Number,
     },
-    auc_duration: {
-        type: Number,
-    },
-    product: {
-        type: String,
+    product : {
+        type : String,
     }
+  
+
 });
 const Gem = mongoose.model('Gem', gemSchema, 'gem');
 module.exports = Gem;

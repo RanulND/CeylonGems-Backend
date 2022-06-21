@@ -15,22 +15,22 @@ const accessTokenSecret = "youraccesstokensecret";
 exports.adminSignIn = function (req, res) {
   var email = req.body.email;
   var password = req.body.password;
-  var status = false
+  // var status = false
   Admin.findOne({ email: email }).then(admin => {
     if (admin) {
       const cmp = bcrypt.compareSync(password, admin.password);
       if (cmp) {
-        status = true
-        successResponse(res, 'Admin Login successful', status);
+        // status = true
+        return sendToken(admin, 200, res);
       }
       else {
-        status = false
-        errorResponse(res, 200, 'Invalid Password', status);
+        // status = false
+        errorResponse(res, null, 'Invalid Password', null);
       }
 
     } else {
-      status = false
-      errorResponse(res, 200, 'Admin not found', status);
+      // status = false
+      errorResponse(res, null, 'Admin not found', null);
     }
   }).catch(err => {
     errorResponse(res, null, null, err);
@@ -62,6 +62,7 @@ const signupvalidate = (data) => {
 const sendToken = (user, statusCode, res) => {
   const token = user.getSignedJwtToken();
   return res.status(statusCode).json({ sucess: true, token });
+ 
 }
 
 //user auth controller | signin
@@ -76,22 +77,20 @@ exports.userSignIn = function (req, res) {
   User.findOne({ email: email }).then(user => {
 
     if (user) {
-    
-        // const { error} =isNotVerified(email,res);
-        const cmp = bcrypt.compareSync(password, user.password);
-        if (cmp) {
-          return sendToken(user, 200, res);
-        }
-        else {
-         return errorResponse(res, null, 'Invalid Password', null);
-        }
-      
-
+      // const { error} =isNotVerified(email,res);
+      const cmp = bcrypt.compareSync(password, user.password);
+      if (cmp) {
+        console.log(user);
+        return sendToken(user, 200, res);
+      }
+      else {
+        return errorResponse(res, null, 'Invalid Password', null);
+      }
     } else {
-     return errorResponse(res, 404, 'User not found. Please Sign Up', null);
+      return errorResponse(res, 404, 'User not found. Please Sign Up', null);
     }
   }).catch(err => {
-   return errorResponse(res, null, null, err);
+    return errorResponse(res, null, null, err);
   });
 }
 
@@ -314,13 +313,13 @@ exports.forgotPassword = async (req, res, next) => {
     const user = await User.findOne({ email });
 
     if (!user) {
-    return errorResponse(res, 404, "User with given email does not Exist", null);
+      return errorResponse(res, 404, "User with given email does not Exist", null);
 
     }
     if (!user.verified) {
       return errorResponse(res, 404, 'Your account has not been verified. Please check your email to verify your account', null);
-  
-      }
+
+    }
 
     // Reset Token Gen and add to database hashed (private) version of token
     const reset = user.getResetPasswordToken();
@@ -358,7 +357,7 @@ exports.forgotPassword = async (req, res, next) => {
 
       await user.save();
       // res.status(200).json({ success: false, data: "Email could not be sent" });
-     return errorResponse(res, 500, "Email could not be sent", null);
+      return errorResponse(res, 500, "Email could not be sent", null);
 
     }
   } catch (err) {
@@ -394,7 +393,7 @@ exports.resetPassword = async (req, res, next) => {
     });
 
     if (!user) {
-     return errorResponse(res, 400, "Invalid Reset Token");
+      return errorResponse(res, 400, "Invalid Reset Token");
     }
 
     //  set new password
@@ -415,6 +414,8 @@ exports.resetPassword = async (req, res, next) => {
   } catch (err) {
     next(err);
   }
+
+
 };
 
 exports.resetPasswordOTP = async (req, res, next) => {
@@ -553,7 +554,6 @@ exports.registerUser = async (req, res) => {
       });
   }
 };
-
 //Get user details
 exports.getUserDetails = function (req, res) {
   User.findById(req.params.userId)
@@ -572,4 +572,3 @@ exports.getUserDetails = function (req, res) {
       });
     });
 };
-

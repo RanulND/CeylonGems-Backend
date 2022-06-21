@@ -66,3 +66,12 @@ exports.counts = function (req, res) {
         errorResponse(res, null, null, err)
     })
 }
+
+exports.getUser = function (req,res) {
+    const {id} = req.body
+    User.findById(id).then(user => {
+        successResponse(res, 'User fetched successfully', user)
+    }).catch(err => {
+        errorResponse(res, 404, 'User not found')
+    })
+}

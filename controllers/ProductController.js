@@ -263,7 +263,15 @@ exports.getGemProduct = function (req, res) {
     }
   });
 }
-
+exports.getJewelryProduct = function (req, res) {
+  Jewellery.findById(req.params.id).then(product => {
+    if (product) {
+      res.json(product)
+    } else {
+      return errorResponse(res, 404, res.err, null)
+    }
+  });
+}
 exports.getJewelryProduct = function (req, res) {
   Jewellery.findById(req.params.id).then(product => {
     if (product) {
@@ -296,4 +304,51 @@ exports.getAllJewelry = async (req, res) =>  {
   } catch(err){
     return errorResponse(res, null, "Something went wrong", err);
   }
+}
+
+exports.gemCountBySeller = function (req, res) {
+  const { id } = req.body
+  Gem.countDocuments({ seller_id: id }).then(notSoldCount => {
+    Gem.countDocuments({ seller_id: id, status: false }).then(soldCount => {
+      const counts = {
+        sold: soldCount,
+        notSold: notSoldCount
+      }
+      successResponse(res, 'fetched gem count by sellerID', counts)
+    }).catch(error => {
+      errorResponse(res, null, null, error)
+    })
+  }).catch(err => {
+    errorResponse(res, null, null, err)
+  })
+  //  Gem.find( {seller_id: "61ed320383b29391c338d7c7"}).count().then(count => {
+  //     successResponse(res, 'fetched gem count by sellerID', count)
+  //   }).catch(err => {
+  //     errorResponse(res, null, null, err)
+  //   })
+} 
+exports.getSellerGemsProfile = function (req, res) {
+  const seller_id = req.body.seller_id;
+  Gem.find({seller_id: seller_id}).then(gems => {
+   successResponse(res,null,gems)
+  }).catch((err) => {
+    console.log(err)
+  });
+}
+// exports.getSellerGemsProfile = function (req, res) {
+//   const email_id = req.body.id;
+//   Gem.find({ _id: email_id }).then(gem => {
+//     if (gem) {
+//       return res.json(gem)
+//     }
+//   })
+// }
+
+exports.getSellerJewelleriesProfile = function (req, res) {
+  const seller_id = req.body.seller;
+  Gem.find({seller: seller_id}).then((jewellery) => {
+    res.json(jewellery)
+  }).catch((err) => {
+    console.log(err)
+  });
 }

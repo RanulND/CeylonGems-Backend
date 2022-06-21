@@ -1,4 +1,4 @@
-const { date, string } = require('joi');
+const { date, string, required } = require('joi');
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 const User = require('./user')
@@ -19,20 +19,29 @@ const auctionSchema = new Schema({
         type: String,
         required: true
     },
-    curPrice: {
-        type: String,
+    basePrice: {
+        type: Number,
+        required : true
     },
-    duration: {
-        type: String,
+    startDate: {
+        type: Date,
+        required: true
+    },
+    endDate : {
+        type: Date,
         required: true
     },
     itemImage: {
         type: String,
+        require:true
     },
     winningBid: {
-        type: String,
+        type: Number,
+        // required :true
     },
+    
 
-});
+
+}, {timestamps: true});
 const Auction = mongoose.model('Auction', auctionSchema, 'auction');
 module.exports = Auction;

@@ -3,27 +3,23 @@ const Schema = mongoose.Schema
 const User = require('./user')
 const Gem = require('./gem')
 const Jewelry = require('./jewellery')
+const Payment = require('./payment')
 
 const shippingAddressSchema = new Schema({
     city: {
-        type: String,
-        // required: true
+        type: String
     },
     streetAddress: {
-        type: String,
-        // required: true
+        type: String
     },
     province: {
-        type: String,
-        // required: true,
+        type: String
     },
     country: {
-        type: String,
-        // required: true,
+        type: String
     },
     zipCode: {
-        type: String,
-        // required: true
+        type: String
     }
 })
 
@@ -40,7 +36,7 @@ const itemList = new Schema({
 
 })
 
-const orderSchema = new mongoose.Schema({
+const orderSchema = new Schema({
     user: {
         type: mongoose.Schema.Types.ObjectId,
         ref: User,
@@ -59,8 +55,30 @@ const orderSchema = new mongoose.Schema({
     },
 
     shippingAddress: shippingAddressSchema,
-
-}, { timestamps: true });
+    orderStatus : {
+        type : Boolean,
+        required: true,
+        default: false
+    },
+    buyerPaymentStatus : {
+        type: Boolean,
+        required : true
+    },
+    deliveredStatus : {
+        type : Boolean,
+        required : true,
+        default: false
+    },
+    sellerPaymentStatus : {
+        type: Boolean,
+        required: true,
+        default: false
+    },
+    paymentID : {
+        type: mongoose.Schema.Types.ObjectId,
+        ref : 'Payment'
+    }
+})
 
 const Order = mongoose.model('Order', orderSchema, 'order');
 module.exports = Order;
