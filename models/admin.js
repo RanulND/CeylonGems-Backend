@@ -1,5 +1,6 @@
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
+const jwt = require ("jsonwebtoken");
 
 const adminSchema = new Schema({
     firstName : { 
@@ -28,6 +29,12 @@ const adminSchema = new Schema({
         type : String
     }
 });
+
+adminSchema.methods.getSignedJwtToken = function () {
+    return jwt.sign({ id: this._id, ...this._doc }, process.env.JWT_SECRET, {
+      expiresIn: process.env.JWT_EXPIRE,
+    });
+  };
 
 const Admin = mongoose.model('Admin', adminSchema, 'admin');
 module.exports = Admin;
