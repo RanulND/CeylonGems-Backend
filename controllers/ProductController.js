@@ -145,6 +145,7 @@ exports.updateGem = async (req, res) => {
     auc_duration: req.body.auc_duration,
     price: req.body.price,
     product: req.body.product,
+    verified: req.body.verified,
   })
     .then((user) => {
       if (user) {
@@ -334,6 +335,27 @@ exports.getAllJewelry = async (req, res) =>  {
   }
 }
 
+exports.gemCountBySeller = function (req, res) {
+  const { id } = req.body
+  Gem.countDocuments({ seller_id: id }).then(notSoldCount => {
+    Gem.countDocuments({ seller_id: id, status: false }).then(soldCount => {
+      const counts = {
+        sold: soldCount,
+        notSold: notSoldCount
+      }
+      successResponse(res, 'fetched gem count by sellerID', counts)
+    }).catch(error => {
+      errorResponse(res, null, null, error)
+    })
+  }).catch(err => {
+    errorResponse(res, null, null, err)
+  })
+  //  Gem.find( {seller_id: "61ed320383b29391c338d7c7"}).count().then(count => {
+  //     successResponse(res, 'fetched gem count by sellerID', count)
+  //   }).catch(err => {
+  //     errorResponse(res, null, null, err)
+  //   })
+} 
 exports.getSellerGemsProfile = function (req, res) {
   const seller_id = req.body.seller_id;
   Gem.find({seller_id: seller_id}).then(gems => {
