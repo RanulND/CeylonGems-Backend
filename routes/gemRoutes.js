@@ -17,7 +17,7 @@ router.put('/edit/:detailId', productController.updateGem);
 router.get('/details/:detailId', productController.getProductDetails);
 //deleteGem
 router.delete('/delete/:detailId', productController.deleteGem);
-
+router.get('/orderget/:detailId', productController.findOrder)
 //get all gems
 router.get('/auction',productController.getAllAuctionGems);
 router.get('/direct',productController.getAllDirectGems);
