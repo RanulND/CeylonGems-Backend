@@ -28,4 +28,5 @@ router.get('/seller-products/:seller_id',productController.getSellerGems)
 router.post('/gem-count-by-id', productController.gemCountBySeller)
 router.post('/sellergems', productController.getSellerGemsProfile);
 router.get('/:id', productController.getGemProduct);
+router.get('get-count/:seller_id',productController.getGemCount)
 module.exports = router;

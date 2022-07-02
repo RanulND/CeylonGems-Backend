@@ -37,6 +37,14 @@ exports.getAuctionDetails = function (req, res) {
     }
   })
 }
+exports.getAuctionCount=function(req, res){
+  const auctionCount= Auction.countDocuments((count) => count)
+     if(!auctionCount) {
+      res.status(500).json({success: false})
+     }
+     res.send({
+      auctionCount : auctionCount})
+}
 
 exports.getAuctionsByDate = (req, res) => {
   const weekAgoDate = new Date(Date.now() - 10 * 24 * 60 * 60 * 1000)
@@ -102,6 +110,7 @@ exports.updateAuction = async (req, res) => {
         message: "Error in updating the Auction data" + err,
       });
     });
+   
 
 };
 
