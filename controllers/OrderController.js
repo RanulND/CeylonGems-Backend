@@ -32,7 +32,6 @@ exports.addOrder = async (req, res) => {
         const addOrder = await newOrder.save();
         if (addOrder) {
             return successResponse(res, "order added successfully", newOrder);
-          
         } else {
             return errorResponse(res, null, "Order didn't able to add");
         }
@@ -60,7 +59,7 @@ exports.getOrder = (req, res) => {
 
 exports.getOrdersByBuyer = (req, res) => {
     const { buyerID } = req.body
-    Order.find({ user: buyerID }).then(orders => {
+    Order.find({user : buyerID}).then(orders => {
         successResponse(res, "Orders fetched by buyer", orders)
     }).catch(err => {
         errorResponse(res, null, null, err)
@@ -68,41 +67,6 @@ exports.getOrdersByBuyer = (req, res) => {
     // populate(user, buyerID).then
 }
 
-exports.getOrdersByDate = (req, res) => {
-    const weekAgoDate = new Date(Date.now() - 10 * 24 * 60 * 60 * 1000)
-    const aggregatorOpts = [
-        {
-            $match: {
-                'createdAt': { $gte: weekAgoDate, $lt: new Date() }
-            }
-        },
-        {
-            $group: {
-                _id: { $dateToString: { format: '%Y-%m-%d', date: "$createdAt" } },
-                count: { $sum: 1 }
-            }
-        },
-    ]
-
-    Order.aggregate(aggregatorOpts).then(result => {
-        const dateArr = new Array(10)
-            .fill(0)
-            .map((_, i) => new Date(Date.now() - (i) * 24 * 60 * 60 * 1000))
-            .map(e => {
-                const date = e.toISOString().split('T')[0];
-                const obj = result.find(f => f._id === date);
-                if (obj) {
-                    return obj
-                }
-
-                return { _id: date, count: 0 };
-            })
-            
-        return successResponse(res, "Orders retrived by date successfully", dateArr.reverse())
-    }).catch(err => {
-        return errorResponse(res, null, null, err)
-    })
-}
 exports.getOrderDetails = function (req, res) {
     const id = req.body.id;
     Order.findById({ _id: id }).then(order => {
@@ -141,3 +105,43 @@ exports.getProductDetails = function (req, res) {
   };
   
 
+//get order and payment details to admin panel
+
+exports.getOrdersToPaySeller = async (req,res) => {
+    try{
+        const orders = await Order.find({buyerPaymentStatus:true, sellerPaymentStatus:false})
+        if(orders){
+            console.log(orders);
+            return successResponse(res,"Found orders successfully",orders);
+        }else {
+            return errorResponse(res, null , "No orders found pay to seller", );
+        }
+    }catch (err) {
+        return errorResponse(res, null, "Something went wrong", err);
+    }
+}
+
+exports.getProductDetailsAdmin = function (req, res) {
+    const id = req.body.id;
+    Gem.findById(id).then((details) => {
+        console.log('func called');
+      if (details) {
+        successResponse(res, details);
+      } else {
+        Jewellery.findById(id).then((details) => {
+          if (details) {
+            successResponse(res, details);
+          }
+          else {
+            return res.status(404).send({
+              message: "Product not found !",
+            });
+          }
+        })
+      }
+    }).catch((err) => {
+        return res.status(500).send({
+          message: "Error in finding the Product data " + err,
+        });
+      });
+  };

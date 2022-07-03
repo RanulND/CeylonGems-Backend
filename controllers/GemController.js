@@ -45,17 +45,15 @@ exports.gemAdd = function (req, res) {
 };
 
 exports.getAllGems = function (req, res) {
-
-  Gem.find({ status: true }).then((gems) => {
+  Gem.find({ status: true , format: "Direct"}).then((gems) => {
     res.json(gems)
   }).catch((err) => {
     console.log(err)
   })
-
 }
 
 exports.getThreeAuctionGems = function (req, res) {
-  const query = { status: true, format: 'Auction-Style' };
+  const query = { status: true, format: 'Auction' };
   const sort = { $natural: -1 };
   const limit = 3;
   Gem.find(query).sort(sort).limit(limit).then((gems) => {
@@ -65,7 +63,7 @@ exports.getThreeAuctionGems = function (req, res) {
   });
 }
 exports.getThreeDirectGems = function (req, res) {
-  const query = { status: true, format: 'test' };
+  const query = { status: true, format: 'Direct' };
   const sort = { $natural: -1 };
   const limit = 3;
   Gem.find(query).sort(sort).limit(limit).then((gems) => {
