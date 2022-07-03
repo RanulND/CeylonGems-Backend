@@ -7,8 +7,10 @@ const productController = require('../controllers/ProductController');
 
 //Jewellery add
 router.post('/add', productController.jewelleryAdd);
-// Edit gem details
+// Edit jewel details
 router.put('/edit/:detailId',productController.updateJewellery);
+//delete jewel
+router.delete('/delete/:detailId', productController.deleteJewel);
 
 // router.get('/:id', productController.getJewelryProduct);
 router.get('/all-jewellery', productController.getAllJewelry);

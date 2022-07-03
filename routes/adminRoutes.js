@@ -3,12 +3,16 @@ const router = app.Router();
 const adminController = require('../controllers/AdminController')
 const shared = require('../shared/getAllUsers')
 const auctionController = require('../controllers/AuctionController')
+const productController = require('../controllers/ProductController')
 
 router.post('/add-admins', adminController.addAdmin);
 
 router.get('/get-admins', adminController.getAdmin);
 
 router.post('/remove-admin', adminController.removeAdmin)
+
+//Get not verified gems
+router.get('/get-non-verified', productController.getNonVerified)
 
 router.get('/get-users', shared.getallusers)
 

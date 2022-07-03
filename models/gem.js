@@ -60,8 +60,14 @@ const gemSchema = new Schema({
     base_value: {
         type: Number,
     },
-    product : {
-        type : String,
+    auc_duration: {
+        type: Number,
+    },
+    product: {
+        type: String,
+    },
+    verified: {
+        type: Boolean
     }
   
 
