@@ -38,7 +38,7 @@ exports.getUsersByDate = (req, res) => {
     ]
 
     User.aggregate(aggregatorOpts).then(result => {
-        const dateArr = new Array(10)
+        const dateArr = new Array(7)
             .fill(0)
             .map((_, i) => new Date(Date.now() - (i) * 24 * 60 * 60 * 1000))
             .map(e => {
